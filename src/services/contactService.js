@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:4500'
+const API_BASE_URL = 'https://back-project-1zhw.onrender.com'
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

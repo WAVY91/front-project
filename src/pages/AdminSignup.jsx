@@ -7,7 +7,7 @@ import Notification from '../components/Notification'
 import '../styles/Auth.css'
 import { useState } from 'react'
 
-const API_URL = 'http://localhost:4500'
+const API_URL = 'https://back-project-1zhw.onrender.com'
 
 const adminSignupSchema = Yup.object().shape({
   email: Yup.string()
