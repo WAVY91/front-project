@@ -7,7 +7,7 @@ import { loginSuccess, loginStart, loginFailure } from '../store/slices/authSlic
 import Notification from '../components/Notification'
 import '../styles/Auth.css'
 
-const API_URL = 'http://localhost:4500'
+const API_URL = 'https://back-project-1zhw.onrender.com'
 
 const signinSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Email is required'),
@@ -147,5 +147,3 @@ const Signin = () => {
 }
 
 export default Signin
-
-
