@@ -134,6 +134,7 @@ const campaignSlice = createSlice({
       const campaign = state.campaigns.find((c) => c.id === action.payload)
       if (campaign) {
         campaign.verified = true
+        // set to 'active' so the campaign appears in active/approved lists immediately
         campaign.status = 'active'
       }
     },

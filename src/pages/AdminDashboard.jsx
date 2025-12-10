@@ -199,7 +199,7 @@ const AdminDashboard = () => {
           <div className="stat-icon">📋</div>
           <h3>Active Campaigns</h3>
           <p className="stat-value">
-            <Counter target={campaigns.filter((c) => c.status === 'active').length} duration={2000} />
+            <Counter target={campaigns.filter((c) => c.status === 'active' || c.status === 'approved').length} duration={2000} />
           </p>
         </div>
         <div className="stat-card">
@@ -366,9 +366,9 @@ const AdminDashboard = () => {
       {activeTab === 'approved-campaigns' && (
         <div className="dashboard-section">
           <h2>Approved Campaigns</h2>
-          {campaigns.filter((c) => c.status === 'active' || c.verified).length > 0 ? (
+          {campaigns.filter((c) => c.status === 'active' || c.status === 'approved' || c.verified).length > 0 ? (
             <div className="admin-list">
-              {campaigns.filter((c) => c.status === 'active' || c.verified).map((campaign) => (
+              {campaigns.filter((c) => c.status === 'active' || c.status === 'approved' || c.verified).map((campaign) => (
                 <div key={campaign.id} className="admin-item">
                   <div className="admin-item-info">
                     <h3>{campaign.title}</h3>

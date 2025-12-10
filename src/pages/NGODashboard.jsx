@@ -114,7 +114,7 @@ const NGODashboard = () => {
         <div className="stat-card">
           <div className="stat-icon">🎯</div>
           <h3>Active Campaigns</h3>
-          <p className="stat-value">{ngoCampaigns.filter((c) => c.status === 'active').length}</p>
+          <p className="stat-value">{ngoCampaigns.filter((c) => c.status === 'active' || c.status === 'approved').length}</p>
         </div>
         <div className="stat-card">
           <div className="stat-icon">👥</div>
