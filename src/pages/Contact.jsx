@@ -24,7 +24,7 @@ const Contact = () => {
     try {
       const response = await contactService.submitMessage(values)
       if (response.data.success) {
-        setSuccessMessage("Your message has been delivered to the admin, we'll get to you shortly")
+        setSuccessMessage("Your message has been delivered to the admin, we'll get to you shortly.")
         resetForm()
         setTimeout(() => setSuccessMessage(''), 5000)
       } else {
