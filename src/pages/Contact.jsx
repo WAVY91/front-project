@@ -25,23 +25,7 @@ const Contact = () => {
       const response = await contactService.submitMessage(values)
       if (response.data.success) {
         setSuccessMessage("Your message has been delivered to the admin, we'll get to you shortly.")
-        // reset form fields
         resetForm()
-
-        // If backend provides the saved message object, attempt to request email notifications.
-        // These endpoints are optional and should be implemented on the backend:
-        // POST /contact/notify-admin   -> notify admin by email
-        // POST /contact/send-confirmation -> send confirmation email to user
-        // Fire-and-forget notification calls: don't await these so the UI isn't blocked
-        const saved = response.data.data || null
-        contactService
-          .notifyAdmin({ messageId: saved?._id || null, ...values })
-          .catch((err) => console.warn('notifyAdmin failed:', err?.message || err))
-
-        contactService
-          .sendConfirmation({ email: values.email, name: values.name, subject: values.subject })
-          .catch((err) => console.warn('sendConfirmation failed:', err?.message || err))
-
         setTimeout(() => setSuccessMessage(''), 5000)
       } else {
         setErrorMessage(response.data.message || 'Failed to send message')
