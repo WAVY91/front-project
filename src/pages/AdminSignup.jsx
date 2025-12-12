@@ -54,11 +54,12 @@ const AdminSignup = () => {
       }
       
       dispatch(signupSuccess(userData))
-      setSuccessMessage('Sign up successful!, please check your inbox for verification')
+      const emailStatus = data.emailSent ? 'Welcome email sent to your inbox.' : 'Account created. Welcome email could not be sent.'
+      setSuccessMessage(`Sign up successful! ${emailStatus}`)
       
       setTimeout(() => {
         navigate('/signin')
-      }, 2000)
+      }, 3000)
     } catch (err) {
       setError(err.message)
       dispatch(signupFailure(err.message))

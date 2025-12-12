@@ -68,11 +68,12 @@ const Signup = () => {
           id: data.user?.id || Math.random().toString(36).substr(2, 9),
         }
         dispatch(signupSuccess(userData))
-        setSuccessMessage('Sign up successful!, please check your inbox for verification.')
+        const emailStatus = data.emailSent ? 'Welcome email sent to your inbox.' : 'Account created. Welcome email could not be sent.'
+        setSuccessMessage(`Sign up successful! ${emailStatus}`)
         
         setTimeout(() => {
           navigate('/signin')
-        }, 2000)
+        }, 3000)
       } else if (values.role === 'ngo') {
         const response = await fetch(`${API_URL}/ngo/signup`, {
           method: 'POST',
@@ -109,8 +110,9 @@ const Signup = () => {
           id: data.user?.id || Math.random().toString(36).substr(2, 9),
         }
         dispatch(signupSuccess(userData))
+        const emailStatus = data.emailSent ? 'Welcome email sent to your inbox.' : 'Account created. Welcome email could not be sent.'
         setError(null)
-        setSuccessMessage('Sign up successful!, please check your inbox for verification')
+        setSuccessMessage(`Sign up successful! Your account is pending verification. ${emailStatus}`)
         
         setTimeout(() => {
           navigate('/signin')
