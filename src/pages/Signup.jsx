@@ -46,6 +46,8 @@ const Signup = () => {
 
     try {
       if (values.role === 'donor') {
+        console.log('[Signup] Starting donor signup for:', values.email)
+        
         const response = await fetch(`${API_URL}/donor/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -56,10 +58,19 @@ const Signup = () => {
           }),
         })
 
-        const data = await response.json()
         if (!response.ok) {
-          throw new Error(data.message || 'Signup failed')
+          const errorData = await response.json().catch(() => ({}))
+          const errorMessage = errorData.message || `Signup failed with status ${response.status}`
+          console.error('[Signup] Donor signup error:', errorMessage)
+          throw new Error(errorMessage)
         }
+
+        const data = await response.json()
+        console.log('[Signup] Donor signup response:', { 
+          success: true, 
+          emailSent: data.emailSent, 
+          userId: data.user?.id 
+        })
 
         const userData = {
           name: values.name,
@@ -68,13 +79,20 @@ const Signup = () => {
           id: data.user?.id || Math.random().toString(36).substr(2, 9),
         }
         dispatch(signupSuccess(userData))
-        const emailStatus = data.emailSent ? 'Welcome email sent to your inbox.' : 'Account created. Welcome email could not be sent.'
-        setSuccessMessage(`Sign up successful! ${emailStatus}`)
+        
+        const emailMessage = data.emailSent 
+          ? `Welcome email sent to ${values.email}. Please check your inbox.`
+          : `Account created successfully. We're having trouble sending the welcome email. Please check your spam folder or contact support.`
+        
+        setSuccessMessage(`✓ Sign up successful! ${emailMessage}`)
+        console.log('[Signup] Donor signup completed successfully for:', values.email)
         
         setTimeout(() => {
           navigate('/signin')
         }, 3000)
       } else if (values.role === 'ngo') {
+        console.log('[Signup] Starting NGO signup for:', values.email)
+        
         const response = await fetch(`${API_URL}/ngo/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -87,10 +105,20 @@ const Signup = () => {
           }),
         })
 
-        const data = await response.json()
         if (!response.ok) {
-          throw new Error(data.message || 'NGO registration failed')
+          const errorData = await response.json().catch(() => ({}))
+          const errorMessage = errorData.message || `NGO registration failed with status ${response.status}`
+          console.error('[Signup] NGO signup error:', errorMessage)
+          throw new Error(errorMessage)
         }
+
+        const data = await response.json()
+        console.log('[Signup] NGO signup response:', { 
+          success: true, 
+          emailSent: data.emailSent, 
+          userId: data.user?.id,
+          status: data.status 
+        })
 
         dispatch(
           registerNGO({
@@ -110,17 +138,23 @@ const Signup = () => {
           id: data.user?.id || Math.random().toString(36).substr(2, 9),
         }
         dispatch(signupSuccess(userData))
-        const emailStatus = data.emailSent ? 'Welcome email sent to your inbox.' : 'Account created. Welcome email could not be sent.'
-        setError(null)
-        setSuccessMessage(`Sign up successful! Your account is pending verification. ${emailStatus}`)
+        
+        const emailMessage = data.emailSent 
+          ? `Welcome email sent to ${values.email}. Please check your inbox.`
+          : `Account created successfully. We're having trouble sending the welcome email. Please check your spam folder or contact support.`
+        
+        setSuccessMessage(`✓ Sign up successful! Your account is pending admin verification. ${emailMessage}`)
+        console.log('[Signup] NGO signup completed successfully for:', values.email)
         
         setTimeout(() => {
           navigate('/signin')
         }, 3000)
       }
     } catch (err) {
-      setError(err.message)
-      dispatch(signupFailure(err.message))
+      const errorMsg = err.message || 'An unexpected error occurred during signup'
+      console.error('[Signup] Error:', errorMsg, err)
+      setError(errorMsg)
+      dispatch(signupFailure(errorMsg))
     } finally {
       setLoading(false)
     }

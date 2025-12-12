@@ -22,16 +22,53 @@ const Contact = () => {
     setErrorMessage('')
 
     try {
+      console.log('[Contact] Submitting message from:', values.email)
+      
       const response = await contactService.submitMessage(values)
+      
+      if (!response || !response.data) {
+        console.error('[Contact] Invalid response format')
+        throw new Error('Invalid response from server')
+      }
+
+      console.log('[Contact] Response received:', { 
+        success: response.data.success, 
+        message: response.data.message,
+        userEmailSent: response.data.userEmailSent,
+        adminEmailSent: response.data.adminEmailSent
+      })
+
       if (response.data.success) {
-        setSuccessMessage('Your message has been received successfully! A confirmation email has been sent to your inbox, and our team has been notified. We will get back to you shortly.')
+        const userEmailStatus = response.data.userEmailSent !== false 
+          ? '✓ Confirmation email sent to your inbox.'
+          : '⚠ We had trouble sending your confirmation email. Please check your spam folder.'
+        
+        const adminEmailStatus = response.data.adminEmailSent !== false 
+          ? '✓ Our team has been notified.'
+          : '⚠ We had trouble notifying our team.'
+        
+        const completeMessage = `Your message has been received successfully! ${userEmailStatus} ${adminEmailStatus} We will get back to you shortly.`
+        
+        setSuccessMessage(completeMessage)
+        console.log('[Contact] Message submitted successfully for:', values.email)
         resetForm()
-        setTimeout(() => setSuccessMessage(''), 6000)
+        setTimeout(() => setSuccessMessage(''), 7000)
       } else {
-        setErrorMessage(response.data.message || 'Failed to send message')
+        const errorMsg = response.data.message || 'Failed to send message'
+        console.error('[Contact] Submission failed:', errorMsg)
+        setErrorMessage(errorMsg)
       }
     } catch (err) {
-      setErrorMessage(err.message || 'An error occurred while sending your message')
+      const errorMsg = err.response?.data?.message || err.message || 'An error occurred while sending your message'
+      console.error('[Contact] Error:', errorMsg, err)
+      
+      if (err.response?.status === 500) {
+        setErrorMessage('Server error. Please try again later or contact us directly at timetomisin@gmail.com')
+      } else if (err.response?.status === 400) {
+        setErrorMessage('Please check your input and try again.')
+      } else {
+        setErrorMessage(errorMsg)
+      }
     } finally {
       setLoading(false)
     }
