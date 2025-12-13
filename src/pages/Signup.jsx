@@ -80,11 +80,7 @@ const Signup = () => {
         }
         dispatch(signupSuccess(userData))
         
-        const emailMessage = data.emailSent 
-          ? `Welcome email sent to ${values.email}. Please check your inbox.`
-          : `Account created successfully. We're having trouble sending the welcome email. Please check your spam folder or contact support.`
-        
-        setSuccessMessage(`✓ Sign up successful! ${emailMessage}`)
+        setSuccessMessage('signup successful!, please check your inbox for email verification.')
         console.log('[Signup] Donor signup completed successfully for:', values.email)
         
         setTimeout(() => {
@@ -139,11 +135,7 @@ const Signup = () => {
         }
         dispatch(signupSuccess(userData))
         
-        const emailMessage = data.emailSent 
-          ? `Welcome email sent to ${values.email}. Please check your inbox.`
-          : `Account created successfully. We're having trouble sending the welcome email. Please check your spam folder or contact support.`
-        
-        setSuccessMessage(`✓ Sign up successful! Your account is pending admin verification. ${emailMessage}`)
+        setSuccessMessage('signup successful!, please check your inbox for email verification.')
         console.log('[Signup] NGO signup completed successfully for:', values.email)
         
         setTimeout(() => {
