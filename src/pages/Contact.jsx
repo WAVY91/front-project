@@ -47,7 +47,7 @@ const Contact = () => {
           ? '✓ Our team has been notified.'
           : '⚠ We had trouble notifying our team.'
         
-        const completeMessage = `Your message has been received successfully! ${userEmailStatus} ${adminEmailStatus} We will get back to you shortly.`
+        const completeMessage = `Your message has been received successfully! ${userEmailStatus} ${adminEmailStatus} We will get back to you shortly thanks.`
         
         setSuccessMessage(completeMessage)
         console.log('[Contact] Message submitted successfully for:', values.email)

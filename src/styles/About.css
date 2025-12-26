@@ -94,18 +94,42 @@
 
 @media (max-width: 768px) {
   .about-hero {
-    padding: 40px 20px;
+    padding: 60px 20px;
   }
 
   .about-hero h1 {
-    font-size: 32px;
+    font-size: 36px;
+  }
+
+  .about-hero p {
+    font-size: 16px;
   }
 
   .about-content {
     padding: 40px 20px;
   }
 
+  .about-section h2 {
+    font-size: 28px;
+  }
+
   .features-list {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-hero h1 {
+    font-size: 28px;
+  }
+
+  .feature-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .feature-number {
+    margin-bottom: 10px;
   }
 }
