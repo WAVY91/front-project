@@ -73,7 +73,7 @@ const About = () => {
         <section className="about-section contact-cta">
           <h2>Questions? Get in Touch</h2>
           <p>We'd love to hear from you. Contact us anytime.</p>
-          <a href="mailto:hello@goodheart.org" className="btn btn-primary">
+          <a href="timetomisin@gmail.com" className="btn btn-primary">
             Contact Us
           </a>
         </section>
