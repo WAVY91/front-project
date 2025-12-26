@@ -5,7 +5,7 @@ const About = () => {
   return (
     <div className="about-page">
       <div className="about-hero">
-        <h1>About Good Heart</h1>
+        <h1>About Good Health</h1>
         <p>Making a difference through transparent and verified charitable giving</p>
       </div>
 
@@ -13,7 +13,7 @@ const About = () => {
         <section className="about-section">
           <h2>Our Mission</h2>
           <p>
-            Good Heart is a digital platform dedicated to connecting compassionate donors with verified NGOs
+            Good Health is a digital platform dedicated to connecting compassionate donors with verified NGOs
             and meaningful causes. We believe in transparency, accountability, and the power of collective
             action to create lasting social impact.
           </p>
@@ -29,7 +29,7 @@ const About = () => {
         </section>
 
         <section className="about-section">
-          <h2>Why Choose Good Heart?</h2>
+          <h2>Why Choose Good Health?</h2>
           <div className="features-list">
             <div className="feature-item">
               <div className="feature-number">1</div>
@@ -65,7 +65,7 @@ const About = () => {
         <section className="about-section">
           <h2>Our Team</h2>
           <p>
-            Good Heart is built by a passionate team of developers, designers, and social impact enthusiasts
+            Good Health is built by a passionate team of developers, designers, and social impact enthusiasts
             committed to making charitable giving simple and transparent.
           </p>
         </section>
