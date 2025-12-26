@@ -8,7 +8,7 @@ import { registerNGO } from '../store/slices/userSlice'
 import Notification from '../components/Notification'
 import '../styles/Auth.css'
 
-const API_URL = 'https://back-project-1zhw.onrender.com'
+const API_URL = 'https://back-project-q78l.onrender.com'
 
 const signupSchema = Yup.object().shape({
   name: Yup.string().required('Full name is required'),
