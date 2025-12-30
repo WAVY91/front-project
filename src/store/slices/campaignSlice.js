@@ -106,7 +106,14 @@ const campaignSlice = createSlice({
       state.error = null
     },
     fetchCampaignsSuccess: (state, action) => {
-      state.campaigns = action.payload
+      // Support both backend campaigns (with _id) and frontend campaigns (with id)
+      state.campaigns = action.payload.map((campaign) => ({
+        ...campaign,
+        // Add id field if it has _id from backend
+        id: campaign.id || campaign._id,
+        // Keep _id if present
+        _id: campaign._id,
+      }))
       state.loading = false
     },
     fetchCampaignsFailure: (state, action) => {
@@ -118,40 +125,40 @@ const campaignSlice = createSlice({
         id: state.campaigns.length + 1,
         ...action.payload,
         raisedAmount: 0,
-        donors: 0,
+        totalDonorsCount: 0,
         verified: false,
         status: 'pending',
       }
       state.campaigns.push(newCampaign)
     },
     updateCampaign: (state, action) => {
-      const index = state.campaigns.findIndex((c) => c.id === action.payload.id)
+      const index = state.campaigns.findIndex((c) => c.id === action.payload.id || c._id === action.payload._id)
       if (index !== -1) {
         state.campaigns[index] = action.payload
       }
     },
     verifyCampaign: (state, action) => {
-      const campaign = state.campaigns.find((c) => c.id === action.payload)
+      const campaign = state.campaigns.find((c) => c.id === action.payload || c._id === action.payload)
       if (campaign) {
         campaign.verified = true
         campaign.status = 'active'
       }
     },
     rejectCampaign: (state, action) => {
-      const campaign = state.campaigns.find((c) => c.id === action.payload)
+      const campaign = state.campaigns.find((c) => c.id === action.payload || c._id === action.payload)
       if (campaign) {
         campaign.status = 'rejected'
       }
     },
     deleteCampaign: (state, action) => {
-      state.campaigns = state.campaigns.filter((c) => c.id !== action.payload)
+      state.campaigns = state.campaigns.filter((c) => c.id !== action.payload && c._id !== action.payload)
     },
     updateCampaignFunding: (state, action) => {
       const { campaignId, amount } = action.payload
-      const campaign = state.campaigns.find((c) => c.id === campaignId)
+      const campaign = state.campaigns.find((c) => c.id === campaignId || c._id === campaignId)
       if (campaign) {
         campaign.raisedAmount += amount
-        campaign.donors += 1
+        campaign.totalDonorsCount = (campaign.totalDonorsCount || 0) + 1
       }
     },
   },

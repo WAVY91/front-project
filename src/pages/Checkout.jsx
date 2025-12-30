@@ -50,11 +50,28 @@ const Checkout = () => {
 
     setTimeout(async () => {
       try {
+        // Use MongoDB _id as campaignId
+        const campaignId = donation._id || donation.campaignId
+        const donorId = user?._id || user?.id
+        
+        console.log('Donation submission:', {
+          campaignId,
+          donorId,
+          amount: donation.amount,
+        })
+
+        if (!campaignId) {
+          throw new Error('Campaign ID is missing')
+        }
+        if (!donorId) {
+          throw new Error('You must be logged in to donate')
+        }
+
         const donationData = {
-          campaignId: donation.campaignId,
-          donorId: user?._id || user?.id,
-          campaignTitle: donation.campaignTitle,
+          campaignId: campaignId,  // Use actual MongoDB _id
+          donorId: donorId,
           amount: Number(donation.amount),
+          campaignTitle: donation.campaignTitle,
           donorName: donation.donorName,
           donorEmail: donation.donorEmail,
           ngoName: donation.ngoName,
@@ -64,15 +81,16 @@ const Checkout = () => {
           status: 'completed',
         }
 
-        // Submit donation to backend to trigger email notifications
-        await donationService.submitDonation(donationData)
+        // Submit donation to backend
+        const response = await donationService.submitDonation(donationData)
+        console.log('Donation response:', response.data)
 
         setIsProcessing(false)
         setPaymentSuccess(true)
 
         dispatch(
           addDonation({
-            campaignId: donation.campaignId,
+            campaignId: campaignId,
             campaignTitle: donation.campaignTitle,
             amount: donation.amount,
             donorName: donation.donorName,
@@ -85,7 +103,7 @@ const Checkout = () => {
 
         dispatch(
           updateCampaignFunding({
-            campaignId: donation.campaignId,
+            campaignId: campaignId,
             amount: donation.amount,
           })
         )
@@ -96,7 +114,8 @@ const Checkout = () => {
         }, 2000)
       } catch (error) {
         setIsProcessing(false)
-        setErrorMessage(error.response?.data?.message || 'Failed to process donation. Please try again.')
+        const errorMsg = error.response?.data?.message || error.message || 'Failed to process donation. Please try again.'
+        setErrorMessage(errorMsg)
         console.error('Donation submission error:', error)
       }
     }, 2000)
@@ -122,7 +141,11 @@ const Checkout = () => {
         <div className="checkout-main">
           <h1>Complete Your Donation</h1>
 
-          {errorMessage && <div className="error-message" style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#fee', color: '#c33', borderRadius: '4px' }}>{errorMessage}</div>}
+          {errorMessage && (
+            <div className="error-message" style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#fee', color: '#c33', borderRadius: '4px' }}>
+              {errorMessage}
+            </div>
+          )}
 
           <div className="order-summary">
             <div className="summary-item">
