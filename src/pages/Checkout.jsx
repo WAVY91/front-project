@@ -54,7 +54,6 @@ const Checkout = () => {
         const campaignId = donation._id || donation.campaignId
         const donorId = user?._id || user?.id
         
-        // Debug logging to identify issues
         console.log('[Checkout] campaignId source:', { _id: donation._id, campaignId: donation.campaignId, resolved: campaignId })
         console.log('[Checkout] donorId source:', { _id: user?._id, id: user?.id, resolved: donorId })
         
