@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   campaigns: [
     {
+      _id: '507f1f77bcf86cd799439011',
       id: 1,
       title: 'Clean Water Initiative',
       description: 'Provide clean drinking water to rural communities',
@@ -18,6 +19,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439012',
       id: 2,
       title: 'Education for Children',
       description: 'Build schools in underprivileged areas',
@@ -33,6 +35,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439013',
       id: 3,
       title: 'Medical Relief Camp',
       description: 'Emergency medical aid for disaster victims',
@@ -48,6 +51,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439014',
       id: 4,
       title: 'Solar Energy for Villages',
       description: 'Install solar panels in remote villages for sustainable electricity',
@@ -63,6 +67,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439015',
       id: 5,
       title: 'Food Security Program',
       description: 'Provide nutritious meals to underfed children and families',
@@ -78,6 +83,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439016',
       id: 6,
       title: 'Emergency Shelter Initiative',
       description: 'Build emergency shelters for homeless and displaced families',

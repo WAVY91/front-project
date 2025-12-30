@@ -155,18 +155,19 @@ const DonationModal = ({ campaign, onClose, user }) => {
 
     // Send the actual MongoDB _id as campaignId
     const campaignId = campaign._id || campaign.id
-    console.log('Submitting donation with campaignId:', campaignId)
+    console.log('Submitting donation with campaignId:', campaignId, 'Type:', typeof campaignId)
 
     dispatch(
       setCurrentDonation({
-        ...campaign,  // Include full campaign object
-        campaignId: campaignId,  // Use MongoDB _id
+        _id: campaign._id,  // Explicitly set MongoDB _id
+        campaignId: campaign._id || campaign.id,  // Ensure MongoDB _id format
         campaignTitle: campaign.title,
         amount: parseFloat(amount),
         donorName: isAnonymous ? 'Anonymous' : donorName,
         donorEmail: isAnonymous ? '' : donorEmail,
         isAnonymous,
         ngoName: campaign.ngoName,
+        ngoId: campaign.ngoId,  // Also include ngoId for reference
       })
     )
 

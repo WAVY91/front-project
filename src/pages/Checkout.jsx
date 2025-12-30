@@ -50,9 +50,13 @@ const Checkout = () => {
 
     setTimeout(async () => {
       try {
-        // Use MongoDB _id as campaignId
+        // Always use MongoDB _id from donation state - validation ensures it's a valid ObjectId
         const campaignId = donation._id || donation.campaignId
         const donorId = user?._id || user?.id
+        
+        // Debug logging to identify issues
+        console.log('[Checkout] campaignId source:', { _id: donation._id, campaignId: donation.campaignId, resolved: campaignId })
+        console.log('[Checkout] donorId source:', { _id: user?._id, id: user?.id, resolved: donorId })
         
         // Fallback values if not set
         const donorName = donation.donorName || user?.name || user?.email || 'Anonymous Donor'
@@ -60,6 +64,7 @@ const Checkout = () => {
         const ngoName = donation.ngoName || 'Organization'
         const campaignTitle = donation.campaignTitle || 'Campaign'
         
+        console.log('Campaign ID being sent:', campaignId, 'Type:', typeof campaignId)
         console.log('Donation submission:', {
           campaignId,
           donorId,
@@ -72,6 +77,14 @@ const Checkout = () => {
         if (!campaignId) {
           throw new Error('Campaign ID is missing')
         }
+        
+        // Validate MongoDB ObjectId format (24 hex characters) or numeric fallback
+        const isValidObjectId = /^[0-9a-f]{24}$/i.test(String(campaignId))
+        if (!isValidObjectId && isNaN(campaignId)) {
+          console.error('Invalid campaign ID format:', campaignId, 'Type:', typeof campaignId)
+          throw new Error(`Invalid campaign ID format: "${campaignId}" is not a valid MongoDB ObjectId`)
+        }
+        
         if (!donorId) {
           throw new Error('You must be logged in to donate')
         }
