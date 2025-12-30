@@ -132,6 +132,18 @@ const authService = {
       throw error
     }
   },
+
+  getActiveCampaigns: async () => {
+    try {
+      console.log('[ApiService] Fetching active campaigns from backend')
+      const response = await apiClient.get('/donor/campaigns/active')
+      console.log('[ApiService] Retrieved active campaigns:', response.data?.data?.length || 0)
+      return response
+    } catch (error) {
+      console.error('[ApiService] Get active campaigns error:', error.message)
+      throw error
+    }
+  },
 }
 
 export default authService

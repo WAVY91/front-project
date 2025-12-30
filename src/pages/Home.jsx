@@ -1,21 +1,38 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import CampaignCard from '../components/CampaignCard'
 import Counter from '../components/Counter'
+import { fetchCampaignsSuccess } from '../store/slices/campaignSlice'
+import apiService from '../services/apiService'
 import '../styles/Home.css'
 
 const API_URL = 'https://back-project-t871.onrender.com'
 
 const Home = () => {
+  const dispatch = useDispatch()
   const campaigns = useSelector((state) => state.campaigns.campaigns)
   const user = useSelector((state) => state.auth.user)
   const [totalDonors, setTotalDonors] = useState(0)
 
   useEffect(() => {
+    const fetchCampaignsFromBackend = async () => {
+      try {
+        console.log('[Home] Fetching active campaigns from backend')
+        const response = await apiService.getActiveCampaigns()
+        if (response.data.success && Array.isArray(response.data.data)) {
+          console.log('[Home] Received campaigns from backend:', response.data.data.length)
+          dispatch(fetchCampaignsSuccess(response.data.data))
+        }
+      } catch (error) {
+        console.error('[Home] Error fetching campaigns from backend:', error.message)
+        // Continue using campaigns from Redux state if backend fetch fails
+      }
+    }
+
     const fetchTotalDonors = async () => {
       try {
-        const response = await fetch(`${API_URL}/donor/all`)
+        const response = await fetch('https://back-project-t871.onrender.com/donor/all')
         const data = await response.json()
         if (data.success && Array.isArray(data.data)) {
           setTotalDonors(data.data.length)
@@ -25,6 +42,7 @@ const Home = () => {
       }
     }
 
+    fetchCampaignsFromBackend()
     fetchTotalDonors()
   }, [])
 
