@@ -78,11 +78,11 @@ const Checkout = () => {
           throw new Error('Campaign ID is missing')
         }
         
-        // Validate MongoDB ObjectId format (24 hex characters) or numeric fallback
+        // Validate MongoDB ObjectId format (24 hex characters) - required for database operations
         const isValidObjectId = /^[0-9a-f]{24}$/i.test(String(campaignId))
-        if (!isValidObjectId && isNaN(campaignId)) {
-          console.error('Invalid campaign ID format:', campaignId, 'Type:', typeof campaignId)
-          throw new Error(`Invalid campaign ID format: "${campaignId}" is not a valid MongoDB ObjectId`)
+        if (!isValidObjectId) {
+          console.error('Invalid campaign ID format:', { campaignId, type: typeof campaignId, length: String(campaignId).length })
+          throw new Error(`Invalid campaign ID: "${campaignId}". Must be a valid MongoDB ObjectId (24 character hex string).`)
         }
         
         if (!donorId) {

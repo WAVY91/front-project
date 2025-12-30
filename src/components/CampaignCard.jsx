@@ -6,7 +6,7 @@ const CampaignCard = ({ campaign }) => {
   const progressPercentage = (campaign.raisedAmount / campaign.goalAmount) * 100
 
   return (
-    <Link to={`/campaign/${campaign.id}`} className="campaign-card-link">
+    <Link to={`/campaign/${campaign._id || campaign.id}`} className="campaign-card-link">
       <div className="campaign-card">
         <div className="campaign-image">
           <img src={campaign.image} alt={campaign.title} />

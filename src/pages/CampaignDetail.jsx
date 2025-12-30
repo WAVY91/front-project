@@ -154,13 +154,15 @@ const DonationModal = ({ campaign, onClose, user }) => {
     }
 
     // Send the actual MongoDB _id as campaignId
-    const campaignId = campaign._id || campaign.id
+    // Priority: use _id (MongoDB string), fallback to id only if _id is not available
+    const campaignId = campaign._id && campaign._id.length > 2 ? campaign._id : campaign.id
     console.log('Submitting donation with campaignId:', campaignId, 'Type:', typeof campaignId)
+    console.log('Campaign object:', { _id: campaign._id, id: campaign.id, selected: campaignId })
 
     dispatch(
       setCurrentDonation({
         _id: campaign._id,  // Explicitly set MongoDB _id
-        campaignId: campaign._id || campaign.id,  // Ensure MongoDB _id format
+        campaignId: campaign._id && campaign._id.length > 2 ? campaign._id : campaign.id,  // Use MongoDB _id if valid
         campaignTitle: campaign.title,
         amount: parseFloat(amount),
         donorName: isAnonymous ? 'Anonymous' : donorName,
