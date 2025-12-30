@@ -7,7 +7,7 @@ import Notification from '../components/Notification'
 import '../styles/Auth.css'
 import { useState } from 'react'
 
-const API_URL = 'https://back-project-q78l.onrender.com'
+const API_URL = 'https://back-project-kmdb.onrender.com'
 
 const adminSignupSchema = Yup.object().shape({
   email: Yup.string()

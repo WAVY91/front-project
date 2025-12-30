@@ -5,7 +5,7 @@ import CampaignCard from '../components/CampaignCard'
 import Counter from '../components/Counter'
 import '../styles/Home.css'
 
-const API_URL = 'https://back-project-q78l.onrender.com'
+const API_URL = 'https://back-project-kmdb.onrender.com'
 
 const Home = () => {
   const campaigns = useSelector((state) => state.campaigns.campaigns)

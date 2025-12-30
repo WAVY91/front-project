@@ -8,7 +8,7 @@ import Counter from '../components/Counter'
 import contactService from '../services/contactService'
 import '../styles/Dashboard.css'
 
-const API_URL = 'https://back-project-q78l.onrender.com'
+const API_URL = 'https://back-project-kmdb.onrender.com'
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
