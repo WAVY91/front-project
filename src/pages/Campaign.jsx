@@ -26,7 +26,16 @@ const Campaign = () => {
       }
     }
 
+    // Fetch campaigns immediately on mount
     fetchCampaignsFromBackend()
+
+    // Set up auto-refresh every 30 seconds to catch newly created campaigns
+    const campaignRefreshInterval = setInterval(() => {
+      console.log('[Campaign] Auto-refreshing campaigns...')
+      fetchCampaignsFromBackend()
+    }, 30000)
+
+    return () => clearInterval(campaignRefreshInterval)
   }, [dispatch])
 
   const activeCampaigns = campaigns.filter((c) => c.status === 'active' || c.status === 'approved')

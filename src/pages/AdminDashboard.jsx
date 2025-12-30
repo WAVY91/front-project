@@ -70,11 +70,22 @@ const AdminDashboard = () => {
       fetchApprovedNGOs()
       fetchContactMessages()
 
-      const refreshInterval = setInterval(() => {
+      // Auto-refresh pending NGOs every 15 seconds to show newly approved ones
+      const ngoRefreshInterval = setInterval(() => {
+        console.log('[AdminDashboard] Auto-refreshing NGOs...')
+        fetchPendingNGOs()
+        fetchApprovedNGOs()
+      }, 15000)
+
+      // Auto-refresh contact messages every 10 seconds
+      const contactRefreshInterval = setInterval(() => {
         fetchContactMessages()
       }, 10000)
 
-      return () => clearInterval(refreshInterval)
+      return () => {
+        clearInterval(ngoRefreshInterval)
+        clearInterval(contactRefreshInterval)
+      }
     }
   }, [user, fetchPendingNGOs, fetchApprovedNGOs, fetchContactMessages])
 

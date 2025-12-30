@@ -42,9 +42,18 @@ const Home = () => {
       }
     }
 
+    // Fetch campaigns immediately on mount
     fetchCampaignsFromBackend()
     fetchTotalDonors()
-  }, [])
+
+    // Set up auto-refresh every 30 seconds to catch newly created campaigns
+    const campaignRefreshInterval = setInterval(() => {
+      console.log('[Home] Auto-refreshing campaigns...')
+      fetchCampaignsFromBackend()
+    }, 30000)
+
+    return () => clearInterval(campaignRefreshInterval)
+  }, [dispatch])
 
   const totalFundsRaised = campaigns.reduce((sum, campaign) => sum + (campaign.raisedAmount || 0), 0)
   const activeCampaigns = campaigns.filter(c => c.status === 'active').length

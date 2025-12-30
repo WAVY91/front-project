@@ -144,6 +144,41 @@ const authService = {
       throw error
     }
   },
-}
+
+  getNGOCampaigns: async (ngoId) => {
+    try {
+      console.log('[ApiService] Fetching campaigns for NGO:', ngoId)
+      const response = await apiClient.get(`/ngo/${ngoId}/campaigns`)
+      console.log('[ApiService] Retrieved NGO campaigns:', response.data?.data?.length || 0)
+      return response
+    } catch (error) {
+      console.error('[ApiService] Get NGO campaigns error:', error.message)
+      throw error
+    }
+  },
+
+  getPendingNGOs: async () => {
+    try {
+      console.log('[ApiService] Fetching pending NGOs')
+      const response = await apiClient.get('/admin/pending-ngos')
+      console.log('[ApiService] Retrieved pending NGOs:', response.data?.data?.length || 0)
+      return response
+    } catch (error) {
+      console.error('[ApiService] Get pending NGOs error:', error.message)
+      throw error
+    }
+  },
+
+  getAllNGOs: async () => {
+    try {
+      console.log('[ApiService] Fetching all NGOs')
+      const response = await apiClient.get('/admin/all-ngos')
+      console.log('[ApiService] Retrieved all NGOs:', response.data?.data?.length || 0)
+      return response
+    } catch (error) {
+      console.error('[ApiService] Get all NGOs error:', error.message)
+      throw error
+    }
+  },
 
 export default authService
