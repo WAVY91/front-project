@@ -151,7 +151,7 @@ const DonationModal = ({ campaign, onClose, user }) => {
 
     dispatch(
       setCurrentDonation({
-        campaignId: campaign.id,
+        campaignId: campaign._id || campaign.id,
         campaignTitle: campaign.title,
         amount: parseFloat(amount),
         donorName: isAnonymous ? 'Anonymous' : donorName,

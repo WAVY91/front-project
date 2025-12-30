@@ -25,6 +25,7 @@ const Checkout = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const donation = useSelector((state) => state.donations.currentDonation)
+  const user = useSelector((state) => state.auth.user)
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -51,8 +52,9 @@ const Checkout = () => {
       try {
         const donationData = {
           campaignId: donation.campaignId,
+          donorId: user?._id || user?.id,
           campaignTitle: donation.campaignTitle,
-          amount: donation.amount,
+          amount: Number(donation.amount),
           donorName: donation.donorName,
           donorEmail: donation.donorEmail,
           ngoName: donation.ngoName,
