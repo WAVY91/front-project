@@ -140,9 +140,15 @@ const AdminDashboard = () => {
       })
       const data = await response.json()
       if (data.success) {
+        console.log('[AdminDashboard] NGO approved, refreshing immediately...')
         dispatch(approveNGO(ngoId))
+        // Remove from pending list immediately
         setPendingNGOs(pendingNGOs.filter(ngo => ngo._id !== ngoId))
+        // Add to approved list immediately
+        setApprovedNGOs([...approvedNGOs, data.data])
+        // Also fetch fresh data from backend to ensure sync
         fetchApprovedNGOs()
+        fetchPendingNGOs()
       }
     } catch {
       alert('Failed to approve NGO')
@@ -157,8 +163,12 @@ const AdminDashboard = () => {
       })
       const data = await response.json()
       if (data.success) {
+        console.log('[AdminDashboard] NGO rejected, refreshing immediately...')
         dispatch(rejectNGO(ngoId))
+        // Remove from pending list immediately
         setPendingNGOs(pendingNGOs.filter(ngo => ngo._id !== ngoId))
+        // Also fetch fresh data
+        fetchPendingNGOs()
       }
     } catch {
       alert('Failed to reject NGO')

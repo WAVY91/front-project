@@ -172,11 +172,35 @@ const authService = {
   getAllNGOs: async () => {
     try {
       console.log('[ApiService] Fetching all NGOs')
-      const response = await apiClient.get('/admin/all-ngos')
-      console.log('[ApiService] Retrieved all NGOs:', response.data?.data?.length || 0)
+      const response = await apiClient.get('/ngo/all')
+      console.log('[ApiService] Retrieved NGOs:', response.data?.length || 0)
       return response
     } catch (error) {
       console.error('[ApiService] Get all NGOs error:', error.message)
+      throw error
+    }
+  },
+
+  approveNGO: async (ngoId) => {
+    try {
+      console.log('[ApiService] Approving NGO:', ngoId)
+      const response = await apiClient.patch(`/admin/approve-ngo/${ngoId}`)
+      console.log('[ApiService] NGO approved successfully')
+      return response
+    } catch (error) {
+      console.error('[ApiService] Approve NGO error:', error.message)
+      throw error
+    }
+  },
+
+  rejectNGO: async (ngoId) => {
+    try {
+      console.log('[ApiService] Rejecting NGO:', ngoId)
+      const response = await apiClient.patch(`/admin/reject-ngo/${ngoId}`)
+      console.log('[ApiService] NGO rejected successfully')
+      return response
+    } catch (error) {
+      console.error('[ApiService] Reject NGO error:', error.message)
       throw error
     }
   },

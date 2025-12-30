@@ -113,7 +113,7 @@ const Home = () => {
         <h2>Featured Campaigns</h2>
         <div className="campaigns-grid">
           {campaigns.slice(0, 6).map((campaign) => (
-            <CampaignCard key={campaign.id} campaign={campaign} />
+            <CampaignCard key={campaign._id || campaign.id} campaign={campaign} />
           ))}
         </div>
         <div className="view-all">
