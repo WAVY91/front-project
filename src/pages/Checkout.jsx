@@ -54,10 +54,19 @@ const Checkout = () => {
         const campaignId = donation._id || donation.campaignId
         const donorId = user?._id || user?.id
         
+        // Fallback values if not set
+        const donorName = donation.donorName || user?.name || user?.email || 'Anonymous Donor'
+        const donorEmail = donation.donorEmail || user?.email || ''
+        const ngoName = donation.ngoName || 'Organization'
+        const campaignTitle = donation.campaignTitle || 'Campaign'
+        
         console.log('Donation submission:', {
           campaignId,
           donorId,
           amount: donation.amount,
+          donorName,
+          donorEmail,
+          ngoName,
         })
 
         if (!campaignId) {
@@ -66,20 +75,25 @@ const Checkout = () => {
         if (!donorId) {
           throw new Error('You must be logged in to donate')
         }
+        if (!donorEmail) {
+          throw new Error('Donor email is required')
+        }
 
         const donationData = {
-          campaignId: campaignId,  // Use actual MongoDB _id
+          campaignId: campaignId,
           donorId: donorId,
           amount: Number(donation.amount),
-          campaignTitle: donation.campaignTitle,
-          donorName: donation.donorName,
-          donorEmail: donation.donorEmail,
-          ngoName: donation.ngoName,
+          campaignTitle: campaignTitle,
+          donorName: donorName,
+          donorEmail: donorEmail,
+          ngoName: ngoName,
           isAnonymous: donation.isAnonymous || false,
           paymentMethod: 'card',
           cardLast4: values.cardNumber.slice(-4),
           status: 'completed',
         }
+
+        console.log('Final donation data being sent:', donationData)
 
         // Submit donation to backend
         const response = await donationService.submitDonation(donationData)
