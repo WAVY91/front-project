@@ -174,3 +174,21 @@
     font-size: 24px;
   }
 }
+
+@media (max-width: 480px) {
+  .faq-hero h1 {
+    font-size: 28px;
+  }
+
+  .faq-question {
+    font-size: 13px;
+  }
+
+  .faq-answer p {
+    font-size: 13px;
+  }
+
+  .faq-cta h2 {
+    font-size: 20px;
+  }
+}

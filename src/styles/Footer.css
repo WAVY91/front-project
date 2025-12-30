@@ -167,30 +167,49 @@
 }
 
 @media (max-width: 768px) {
+  .footer {
+    padding-top: 40px;
+  }
+
   .footer-container {
     grid-template-columns: 1fr;
     gap: 30px;
     padding: 0 20px 30px;
   }
 
+  .footer-bottom {
+    padding: 20px;
+  }
+
   .footer-bottom-content {
     flex-direction: column;
     text-align: center;
+    gap: 15px;
   }
 
   .footer-links {
     justify-content: center;
   }
 
-  .footer-bottom {
-    padding: 20px;
-  }
-
   .footer-mission {
-    margin-top: 20px;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-logo h3 {
+    font-size: 20px;
   }
 
-  .footer-container {
-    padding: 0 20px 30px;
+  .social-links {
+    justify-content: center;
+  }
+
+  .footer-section {
+    text-align: center;
+  }
+
+  .footer-section h4 {
+    margin-bottom: 15px;
   }
 }

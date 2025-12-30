@@ -9,7 +9,6 @@ const Campaign = () => {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [sortBy, setSortBy] = useState('newest')
 
-  // Only show active/approved campaigns to donors
   const activeCampaigns = campaigns.filter((c) => c.status === 'active' || c.status === 'approved')
   const categories = ['All', ...new Set(activeCampaigns.map((c) => c.category))]
 

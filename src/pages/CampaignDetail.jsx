@@ -9,7 +9,11 @@ const CampaignDetail = () => {
   const navigate = useNavigate()
   const user = useSelector((state) => state.auth.user)
   const campaigns = useSelector((state) => state.campaigns.campaigns)
-  const campaign = campaigns.find((c) => c.id === parseInt(id))
+  
+  // Try to find campaign by _id (MongoDB) or id (numeric)
+  const campaign = campaigns.find((c) => 
+    c._id === id || c.id === parseInt(id)
+  )
   const [showDonationModal, setShowDonationModal] = useState(false)
 
   if (!campaign) {
@@ -76,11 +80,11 @@ const CampaignDetail = () => {
                 <span className="stat-label">Goal</span>
               </div>
               <div className="stat">
-                <span className="stat-value">{campaign.donors}</span>
+                <span className="stat-value">{campaign.totalDonorsCount || 0}</span>
                 <span className="stat-label">Donors</span>
               </div>
               <div className="stat">
-                <span className="stat-value">{campaign.daysLeft}</span>
+                <span className="stat-value">{campaign.daysLeft || 'N/A'}</span>
                 <span className="stat-label">Days Left</span>
               </div>
             </div>
@@ -113,9 +117,9 @@ const CampaignDetail = () => {
         <h2>Other Campaigns by This NGO</h2>
         <div className="related-grid">
           {campaigns
-            .filter((c) => c.ngoId === campaign.ngoId && c.id !== campaign.id)
+            .filter((c) => c.ngoId === campaign.ngoId && (c._id !== campaign._id && c.id !== campaign.id))
             .map((c) => (
-              <Link key={c.id} to={`/campaign/${c.id}`} className="related-card">
+              <Link key={c._id || c.id} to={`/campaign/${c._id || c.id}`} className="related-card">
                 <img src={c.image} alt={c.title} />
                 <h4>{c.title}</h4>
               </Link>
@@ -149,9 +153,14 @@ const DonationModal = ({ campaign, onClose, user }) => {
       return
     }
 
+    // Send the actual MongoDB _id as campaignId
+    const campaignId = campaign._id || campaign.id
+    console.log('Submitting donation with campaignId:', campaignId)
+
     dispatch(
       setCurrentDonation({
-        campaignId: campaign.id,
+        ...campaign,  // Include full campaign object
+        campaignId: campaignId,  // Use MongoDB _id
         campaignTitle: campaign.title,
         amount: parseFloat(amount),
         donorName: isAnonymous ? 'Anonymous' : donorName,
