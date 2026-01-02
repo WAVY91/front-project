@@ -295,11 +295,15 @@
 
 @media (max-width: 768px) {
   .impact-hero {
-    padding: 40px 20px;
+    padding: 60px 20px;
   }
 
   .impact-hero h1 {
-    font-size: 32px;
+    font-size: 36px;
+  }
+
+  .impact-hero p {
+    font-size: 16px;
   }
 
   .impact-intro,
@@ -310,18 +314,49 @@
     padding: 40px 20px;
   }
 
+  .intro-content h2,
+  .impact-areas h2,
+  .success-stories h2,
+  .impact-stats h2,
+  .impact-commitment h2 {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
   .areas-grid,
   .stories-grid,
   .stats-grid,
   .commitment-content {
     gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 
   .impact-cta {
-    padding: 40px 20px;
+    padding: 60px 20px;
   }
 
   .impact-cta h2 {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .impact-hero h1 {
+    font-size: 28px;
+  }
+
+  .stat-number {
     font-size: 24px;
+  }
+
+  .impact-card, .story-card, .stat {
+    padding: 20px;
+  }
+
+  .areas-grid,
+  .stories-grid,
+  .stats-grid,
+  .commitment-content {
+    grid-template-columns: 1fr;
   }
 }

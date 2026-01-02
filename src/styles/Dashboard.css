@@ -582,33 +582,57 @@
   margin: 10px 0 0 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .dashboard-header {
     flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .campaign-card-dashboard {
+    grid-template-columns: 1fr 1fr;
     gap: 15px;
-    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 20px 15px;
   }
 
   .dashboard-stats {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .donations-table-header,
+  .dashboard-section {
+    padding: 20px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .donations-table-header {
+    display: none;
+  }
+
   .donation-item {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .donation-campaign {
+    grid-column: span 2;
+  }
+
+  .form-row, .report-section {
     grid-template-columns: 1fr;
   }
 
   .campaign-card-dashboard {
     grid-template-columns: 1fr;
-  }
-
-  .campaign-card-actions {
-    flex-direction: row;
-  }
-
-  .campaign-card-actions .btn {
-    width: auto;
-    flex: 1;
   }
 
   .admin-item {
@@ -619,15 +643,47 @@
     justify-content: flex-start;
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .report-section {
-    grid-template-columns: 1fr;
-  }
-
   .admin-tabs {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .donation-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .donation-campaign {
+    grid-column: span 1;
+  }
+
+  .header-content h1 {
+    font-size: 24px;
+  }
+
+  .stat-card {
+    padding: 15px;
+  }
+
+  .impact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .campaign-card-dashboard {
+    padding: 15px;
+  }
+
+  .campaign-card-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .campaign-card-actions .btn {
+    width: 100%;
   }
 }

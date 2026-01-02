@@ -5,6 +5,7 @@ import { addDonation, clearCurrentDonation } from '../store/slices/donationSlice
 import { updateCampaignFunding } from '../store/slices/campaignSlice'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
+import donationService from '../services/donationService'
 import '../styles/Checkout.css'
 
 const paymentSchema = Yup.object().shape({
@@ -24,8 +25,10 @@ const Checkout = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const donation = useSelector((state) => state.donations.currentDonation)
+  const user = useSelector((state) => state.auth.user)
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   if (!donation) {
     return (
@@ -41,37 +44,106 @@ const Checkout = () => {
     )
   }
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     setIsProcessing(true)
+    setErrorMessage('')
 
-    setTimeout(() => {
-      setIsProcessing(false)
-      setPaymentSuccess(true)
-
-      dispatch(
-        addDonation({
-          campaignId: donation.campaignId,
-          campaignTitle: donation.campaignTitle,
+    setTimeout(async () => {
+      try {
+        // Always use MongoDB _id from donation state - validation ensures it's a valid ObjectId
+        const campaignId = donation._id || donation.campaignId
+        const donorId = user?._id || user?.id
+        
+        console.log('[Checkout] campaignId source:', { _id: donation._id, campaignId: donation.campaignId, resolved: campaignId })
+        console.log('[Checkout] donorId source:', { _id: user?._id, id: user?.id, resolved: donorId })
+        
+        // Fallback values if not set
+        const donorName = donation.donorName || user?.name || user?.email || 'Anonymous Donor'
+        const donorEmail = donation.donorEmail || user?.email || ''
+        const ngoName = donation.ngoName || 'Organization'
+        const campaignTitle = donation.campaignTitle || 'Campaign'
+        
+        console.log('Campaign ID being sent:', campaignId, 'Type:', typeof campaignId)
+        console.log('Donation submission:', {
+          campaignId,
+          donorId,
           amount: donation.amount,
-          donorName: donation.donorName,
-          donorEmail: donation.donorEmail,
-          ngoName: donation.ngoName,
+          donorName,
+          donorEmail,
+          ngoName,
+        })
+
+        if (!campaignId) {
+          throw new Error('Campaign ID is missing')
+        }
+        
+        // Validate MongoDB ObjectId format (24 hex characters) - required for database operations
+        const isValidObjectId = /^[0-9a-f]{24}$/i.test(String(campaignId))
+        if (!isValidObjectId) {
+          console.error('Invalid campaign ID format:', { campaignId, type: typeof campaignId, length: String(campaignId).length })
+          throw new Error(`Invalid campaign ID: "${campaignId}". Must be a valid MongoDB ObjectId (24 character hex string).`)
+        }
+        
+        if (!donorId) {
+          throw new Error('You must be logged in to donate')
+        }
+        if (!donorEmail) {
+          throw new Error('Donor email is required')
+        }
+
+        const donationData = {
+          campaignId: campaignId,
+          donorId: donorId,
+          amount: Number(donation.amount),
+          campaignTitle: campaignTitle,
+          donorName: donorName,
+          donorEmail: donorEmail,
+          ngoName: ngoName,
+          isAnonymous: donation.isAnonymous || false,
           paymentMethod: 'card',
           cardLast4: values.cardNumber.slice(-4),
-        })
-      )
+          status: 'completed',
+        }
 
-      dispatch(
-        updateCampaignFunding({
-          campaignId: donation.campaignId,
-          amount: donation.amount,
-        })
-      )
+        console.log('Final donation data being sent:', donationData)
 
-      setTimeout(() => {
-        dispatch(clearCurrentDonation())
-        navigate('/donor-dashboard')
-      }, 2000)
+        // Submit donation to backend
+        const response = await donationService.submitDonation(donationData)
+        console.log('Donation response:', response.data)
+
+        setIsProcessing(false)
+        setPaymentSuccess(true)
+
+        dispatch(
+          addDonation({
+            campaignId: campaignId,
+            campaignTitle: donation.campaignTitle,
+            amount: donation.amount,
+            donorName: donation.donorName,
+            donorEmail: donation.donorEmail,
+            ngoName: donation.ngoName,
+            paymentMethod: 'card',
+            cardLast4: values.cardNumber.slice(-4),
+          })
+        )
+
+        dispatch(
+          updateCampaignFunding({
+            campaignId: campaignId,
+            amount: donation.amount,
+          })
+        )
+
+        setTimeout(() => {
+          dispatch(clearCurrentDonation())
+          navigate('/donor-dashboard')
+        }, 2000)
+      } catch (error) {
+        setIsProcessing(false)
+        const errorMsg = error.response?.data?.message || error.message || 'Failed to process donation. Please try again.'
+        setErrorMessage(errorMsg)
+        console.error('Donation submission error:', error)
+      }
     }, 2000)
   }
 
@@ -82,7 +154,7 @@ const Checkout = () => {
           <div className="success-icon">✓</div>
           <h2>Payment Successful!</h2>
           <p>Thank you for your generous donation of ₦{donation.amount.toLocaleString()}</p>
-          <p className="success-detail">A confirmation email will be sent to {donation.donorEmail || 'your email'}</p>
+          <p className="success-detail">A confirmation email has been sent to {donation.donorEmail || 'your email'} and to the NGO</p>
           <p className="redirect-message">Redirecting to dashboard...</p>
         </div>
       </div>
@@ -94,6 +166,12 @@ const Checkout = () => {
       <div className="checkout-wrapper">
         <div className="checkout-main">
           <h1>Complete Your Donation</h1>
+
+          {errorMessage && (
+            <div className="error-message" style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#fee', color: '#c33', borderRadius: '4px' }}>
+              {errorMessage}
+            </div>
+          )}
 
           <div className="order-summary">
             <div className="summary-item">

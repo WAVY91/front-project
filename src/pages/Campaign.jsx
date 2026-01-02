@@ -1,15 +1,43 @@
-import React, { useState, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useState, useEffect, useMemo } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import CampaignCard from '../components/CampaignCard'
+import { fetchCampaignsSuccess } from '../store/slices/campaignSlice'
+import apiService from '../services/apiService'
 import '../styles/Campaign.css'
 
 const Campaign = () => {
+  const dispatch = useDispatch()
   const campaigns = useSelector((state) => state.campaigns.campaigns)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [sortBy, setSortBy] = useState('newest')
 
-  // Only show active/approved campaigns to donors
+  useEffect(() => {
+    const fetchCampaignsFromBackend = async () => {
+      try {
+        console.log('[Campaign] Fetching active campaigns from backend')
+        const response = await apiService.getActiveCampaigns()
+        if (response.data.success && Array.isArray(response.data.data)) {
+          console.log('[Campaign] Received campaigns from backend:', response.data.data.length)
+          dispatch(fetchCampaignsSuccess(response.data.data))
+        }
+      } catch (error) {
+        console.error('[Campaign] Error fetching campaigns from backend:', error.message)
+      }
+    }
+
+    // Fetch campaigns immediately on mount
+    fetchCampaignsFromBackend()
+
+    // Set up auto-refresh every 30 seconds to catch newly created campaigns
+    const campaignRefreshInterval = setInterval(() => {
+      console.log('[Campaign] Auto-refreshing campaigns...')
+      fetchCampaignsFromBackend()
+    }, 30000)
+
+    return () => clearInterval(campaignRefreshInterval)
+  }, [dispatch])
+
   const activeCampaigns = campaigns.filter((c) => c.status === 'active' || c.status === 'approved')
   const categories = ['All', ...new Set(activeCampaigns.map((c) => c.category))]
 

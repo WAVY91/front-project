@@ -438,17 +438,33 @@
   margin: -10px 0 10px 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .campaign-detail-container {
     grid-template-columns: 1fr;
   }
 
   .campaign-detail-image {
-    height: 300px;
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .campaign-detail-page {
+    padding: 20px 15px;
   }
 
   .campaign-detail-content {
-    padding: 20px;
+    padding: 25px;
+    gap: 20px;
+  }
+
+  .campaign-title-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .campaign-title-section h1 {
+    font-size: 26px;
   }
 
   .funding-stats {
@@ -459,11 +475,56 @@
     grid-template-columns: 1fr;
   }
 
+  .campaign-description,
+  .related-campaigns {
+    padding: 25px;
+  }
+
   .related-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .modal-content {
+    padding: 25px;
+    margin: 15px;
+  }
+
   .amount-buttons {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .campaign-detail-image {
+    height: 250px;
+  }
+
+  .ngo-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .funding-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+  }
+
+  .stat-value {
+    margin-bottom: 0;
+  }
+
+  .amount-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .related-grid {
+    grid-template-columns: 1fr;
   }
 }

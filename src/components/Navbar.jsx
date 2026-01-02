@@ -15,10 +15,14 @@ const Navbar = () => {
     return null
   }
 
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false)
+  }
+
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <Link to="/" className="nav-logo">
+        <Link to="/" className="nav-logo" onClick={closeMobileMenu}>
           <span className="logo-icon">🏥</span>
           Good Health
         </Link>
@@ -61,18 +65,18 @@ const Navbar = () => {
 
       {mobileMenuOpen && (
         <div className="mobile-menu">
-          <Link to="/" className="mobile-link">Home</Link>
-          <Link to="/campaigns" className="mobile-link">Campaigns</Link>
-          <Link to="/about" className="mobile-link">About</Link>
-          <Link to="/impact" className="mobile-link">Impact</Link>
-          <Link to="/contact" className="mobile-link">Contact</Link>
+          <Link to="/" className="mobile-link" onClick={closeMobileMenu}>Home</Link>
+          <Link to="/campaigns" className="mobile-link" onClick={closeMobileMenu}>Campaigns</Link>
+          <Link to="/about" className="mobile-link" onClick={closeMobileMenu}>About</Link>
+          <Link to="/impact" className="mobile-link" onClick={closeMobileMenu}>Impact</Link>
+          <Link to="/contact" className="mobile-link" onClick={closeMobileMenu}>Contact</Link>
           {user && getDashboardLink() && (
-            <Link to={getDashboardLink()} className="mobile-link">Dashboard</Link>
+            <Link to={getDashboardLink()} className="mobile-link" onClick={closeMobileMenu}>Dashboard</Link>
           )}
           {!user && (
             <>
-              <Link to="/signin" className="mobile-link">Sign In</Link>
-              <Link to="/signup" className="mobile-link">Sign Up</Link>
+              <Link to="/signin" className="mobile-link" onClick={closeMobileMenu}>Sign In</Link>
+              <Link to="/signup" className="mobile-link" onClick={closeMobileMenu}>Sign Up</Link>
             </>
           )}
         </div>

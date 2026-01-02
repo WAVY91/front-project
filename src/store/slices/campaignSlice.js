@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   campaigns: [
     {
+      _id: '507f1f77bcf86cd799439011',
       id: 1,
       title: 'Clean Water Initiative',
       description: 'Provide clean drinking water to rural communities',
@@ -18,6 +19,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439012',
       id: 2,
       title: 'Education for Children',
       description: 'Build schools in underprivileged areas',
@@ -33,6 +35,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439013',
       id: 3,
       title: 'Medical Relief Camp',
       description: 'Emergency medical aid for disaster victims',
@@ -48,6 +51,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439014',
       id: 4,
       title: 'Solar Energy for Villages',
       description: 'Install solar panels in remote villages for sustainable electricity',
@@ -63,6 +67,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439015',
       id: 5,
       title: 'Food Security Program',
       description: 'Provide nutritious meals to underfed children and families',
@@ -78,6 +83,7 @@ const initialState = {
       verified: true,
     },
     {
+      _id: '507f1f77bcf86cd799439016',
       id: 6,
       title: 'Emergency Shelter Initiative',
       description: 'Build emergency shelters for homeless and displaced families',
@@ -106,7 +112,14 @@ const campaignSlice = createSlice({
       state.error = null
     },
     fetchCampaignsSuccess: (state, action) => {
-      state.campaigns = action.payload
+      // Support both backend campaigns (with _id) and frontend campaigns (with id)
+      state.campaigns = action.payload.map((campaign) => ({
+        ...campaign,
+        // Add id field if it has _id from backend
+        id: campaign.id || campaign._id,
+        // Keep _id if present
+        _id: campaign._id,
+      }))
       state.loading = false
     },
     fetchCampaignsFailure: (state, action) => {
@@ -118,41 +131,40 @@ const campaignSlice = createSlice({
         id: state.campaigns.length + 1,
         ...action.payload,
         raisedAmount: 0,
-        donors: 0,
+        totalDonorsCount: 0,
         verified: false,
         status: 'pending',
       }
       state.campaigns.push(newCampaign)
     },
     updateCampaign: (state, action) => {
-      const index = state.campaigns.findIndex((c) => c.id === action.payload.id)
+      const index = state.campaigns.findIndex((c) => c.id === action.payload.id || c._id === action.payload._id)
       if (index !== -1) {
         state.campaigns[index] = action.payload
       }
     },
     verifyCampaign: (state, action) => {
-      const campaign = state.campaigns.find((c) => c.id === action.payload)
+      const campaign = state.campaigns.find((c) => c.id === action.payload || c._id === action.payload)
       if (campaign) {
         campaign.verified = true
-        // set to 'active' so the campaign appears in active/approved lists immediately
         campaign.status = 'active'
       }
     },
     rejectCampaign: (state, action) => {
-      const campaign = state.campaigns.find((c) => c.id === action.payload)
+      const campaign = state.campaigns.find((c) => c.id === action.payload || c._id === action.payload)
       if (campaign) {
         campaign.status = 'rejected'
       }
     },
     deleteCampaign: (state, action) => {
-      state.campaigns = state.campaigns.filter((c) => c.id !== action.payload)
+      state.campaigns = state.campaigns.filter((c) => c.id !== action.payload && c._id !== action.payload)
     },
     updateCampaignFunding: (state, action) => {
       const { campaignId, amount } = action.payload
-      const campaign = state.campaigns.find((c) => c.id === campaignId)
+      const campaign = state.campaigns.find((c) => c.id === campaignId || c._id === campaignId)
       if (campaign) {
         campaign.raisedAmount += amount
-        campaign.donors += 1
+        campaign.totalDonorsCount = (campaign.totalDonorsCount || 0) + 1
       }
     },
   },
