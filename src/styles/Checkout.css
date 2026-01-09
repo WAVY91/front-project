@@ -295,19 +295,44 @@
 }
 
 @media (max-width: 768px) {
+  .checkout-container {
+    padding: 40px 15px;
+    align-items: flex-start;
+  }
+
   .checkout-wrapper {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .checkout-main {
+    padding: 25px;
+  }
+
+  .checkout-main h1 {
+    font-size: 24px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 
-  .checkout-main {
-    padding: 20px;
+  .success-message, .empty-checkout {
+    padding: 40px 20px;
   }
+}
 
+@media (max-width: 480px) {
   .checkout-main h1 {
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .payment-form {
+    gap: 20px;
+  }
+
+  .sidebar-card {
+    padding: 20px;
   }
 }

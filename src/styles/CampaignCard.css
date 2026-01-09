@@ -173,3 +173,29 @@
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
+
+@media (max-width: 480px) {
+  .campaign-image {
+    height: 200px;
+  }
+
+  .campaign-header h3 {
+    font-size: 16px;
+  }
+
+  .campaign-meta {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .meta-item {
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .meta-label {
+    margin-bottom: 0;
+  }
+}

@@ -223,24 +223,69 @@
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
-    padding: 40px 20px;
+    padding: 60px 20px;
+    min-height: 500px;
   }
 
   .hero-content h1 {
-    font-size: 32px;
+    font-size: 40px;
+  }
+
+  .hero-content p {
+    font-size: 18px;
   }
 
   .hero-buttons {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
   .features,
   .campaigns-preview,
   .cta {
-    padding: 40px 20px;
+    padding: 60px 20px;
   }
 
   .campaigns-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .stats {
+    padding: 40px 20px;
+    gap: 20px;
+  }
+
+  .stat-item {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 32px;
+  }
+
+  .hero-content p {
+    font-size: 16px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+  }
+
+  .features h2,
+  .campaigns-preview h2,
+  .cta h2 {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .stat-item h3 {
+    font-size: 24px;
   }
 }
