@@ -128,12 +128,12 @@ const campaignSlice = createSlice({
     },
     addCampaign: (state, action) => {
       const newCampaign = {
-        id: state.campaigns.length + 1,
         ...action.payload,
-        raisedAmount: 0,
-        totalDonorsCount: 0,
-        verified: false,
-        status: 'pending',
+        id: action.payload.id || action.payload._id || (state.campaigns.length + 1),
+        raisedAmount: action.payload.raisedAmount || 0,
+        donors: action.payload.donors || 0,
+        verified: action.payload.verified || false,
+        status: action.payload.status || 'pending',
       }
       state.campaigns.push(newCampaign)
     },
@@ -164,6 +164,7 @@ const campaignSlice = createSlice({
       const campaign = state.campaigns.find((c) => c.id === campaignId || c._id === campaignId)
       if (campaign) {
         campaign.raisedAmount += amount
+        campaign.donors = (campaign.donors || 0) + 1
         campaign.totalDonorsCount = (campaign.totalDonorsCount || 0) + 1
       }
     },

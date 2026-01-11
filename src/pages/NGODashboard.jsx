@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../store/slices/authSlice'
-import { addCampaign, updateCampaign, deleteCampaign } from '../store/slices/campaignSlice'
+import { addCampaign, updateCampaign, deleteCampaign, fetchCampaignsSuccess } from '../store/slices/campaignSlice'
+import campaignService from '../services/campaignService'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import '../styles/Dashboard.css'
@@ -25,6 +26,23 @@ const NGODashboard = () => {
   const [editingCampaign, setEditingCampaign] = useState(null)
   const [showEditForm, setShowEditForm] = useState(false)
 
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await campaignService.getAllCampaigns()
+        if (response.data.success) {
+          dispatch(fetchCampaignsSuccess(response.data.data))
+        }
+      } catch (error) {
+        console.error('Error fetching campaigns:', error)
+      }
+    }
+
+    if (user && user.role === 'ngo') {
+      fetchCampaigns()
+    }
+  }, [user, dispatch])
+
   if (!user || user.role !== 'ngo') {
     return (
       <div className="dashboard-container">
@@ -44,20 +62,28 @@ const NGODashboard = () => {
   const totalFundsRaised = ngoCampaigns.reduce((sum, c) => sum + c.raisedAmount, 0)
   const totalDonors = ngoCampaigns.reduce((sum, c) => sum + c.donors, 0)
 
-  const handleCreateCampaign = (values) => {
-    dispatch(
-      addCampaign({
+  const handleCreateCampaign = async (values) => {
+    try {
+      const response = await campaignService.createCampaign({
         title: values.title,
         description: values.description,
         ngoName: ngoName,
-        ngoId: user.id,
+        ngoId: user._id || user.id,
         goalAmount: parseInt(values.goalAmount),
         category: values.category,
         daysLeft: parseInt(values.daysLeft),
         image: values.image,
       })
-    )
-    setShowCreateForm(false)
+
+      if (response.data.success) {
+        dispatch(addCampaign(response.data.data))
+        setShowCreateForm(false)
+        alert('Campaign created successfully!')
+      }
+    } catch (error) {
+      console.error('Error creating campaign:', error)
+      alert(error.response?.data?.message || 'Failed to create campaign')
+    }
   }
 
   const handleEditCampaign = (campaign) => {
@@ -65,31 +91,41 @@ const NGODashboard = () => {
     setShowEditForm(true)
   }
 
-  const handleUpdateCampaign = (values) => {
-    dispatch(
-      updateCampaign({
-        id: editingCampaign.id,
+  const handleUpdateCampaign = async (values) => {
+    try {
+      const response = await campaignService.updateCampaign(editingCampaign._id || editingCampaign.id, {
         title: values.title,
         description: values.description,
-        ngoName: ngoName,
-        ngoId: user.id,
         goalAmount: parseInt(values.goalAmount),
         category: values.category,
         daysLeft: parseInt(values.daysLeft),
         image: values.image,
-        raisedAmount: editingCampaign.raisedAmount,
-        donors: editingCampaign.donors,
-        verified: editingCampaign.verified,
-        status: editingCampaign.status,
       })
-    )
-    setEditingCampaign(null)
-    setShowEditForm(false)
+
+      if (response.data.success) {
+        dispatch(updateCampaign(response.data.data))
+        setEditingCampaign(null)
+        setShowEditForm(false)
+        alert('Campaign updated successfully!')
+      }
+    } catch (error) {
+      console.error('Error updating campaign:', error)
+      alert(error.response?.data?.message || 'Failed to update campaign')
+    }
   }
 
-  const handleDeleteCampaign = (id) => {
+  const handleDeleteCampaign = async (id) => {
     if (window.confirm('Are you sure you want to delete this campaign? This action cannot be undone.')) {
-      dispatch(deleteCampaign(id))
+      try {
+        const response = await campaignService.deleteCampaign(id)
+        if (response.data.success) {
+          dispatch(deleteCampaign(id))
+          alert('Campaign deleted successfully!')
+        }
+      } catch (error) {
+        console.error('Error deleting campaign:', error)
+        alert(error.response?.data?.message || 'Failed to delete campaign')
+      }
     }
   }
 

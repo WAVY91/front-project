@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'https://back-project-t871.onrender.com'
+const API_BASE_URL = 'https://back-project-r1ur.onrender.com'
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
