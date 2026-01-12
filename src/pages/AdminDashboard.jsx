@@ -156,42 +156,36 @@ const AdminDashboard = () => {
 
   const handleVerifyCampaign = async (id) => {
     try {
-      // Update backend
       const response = await fetch(`${API_URL}/campaign/${id}/approve`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
       })
       const data = await response.json()
       if (data.success) {
-        // Update Redux state
         dispatch(verifyCampaign(id))
       } else {
         alert('Failed to approve campaign')
       }
     } catch (error) {
       console.error('Error approving campaign:', error)
-      // Still update Redux state for offline scenario
       dispatch(verifyCampaign(id))
     }
   }
 
   const handleRejectCampaign = async (id) => {
     try {
-      // Update backend
       const response = await fetch(`${API_URL}/campaign/${id}/reject`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
       })
       const data = await response.json()
       if (data.success) {
-        // Update Redux state
         dispatch(rejectCampaign(id))
       } else {
         alert('Failed to reject campaign')
       }
     } catch (error) {
       console.error('Error rejecting campaign:', error)
-      // Still update Redux state for offline scenario
       dispatch(rejectCampaign(id))
     }
   }

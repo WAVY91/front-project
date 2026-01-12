@@ -26,10 +26,8 @@ const Campaign = () => {
       }
     }
 
-    // Fetch campaigns immediately on mount
     fetchCampaignsFromBackend()
 
-    // Set up auto-refresh every 30 seconds to catch newly created campaigns
     const campaignRefreshInterval = setInterval(() => {
       console.log('[Campaign] Auto-refreshing campaigns...')
       fetchCampaignsFromBackend()

@@ -50,14 +50,12 @@ const Checkout = () => {
 
     setTimeout(async () => {
       try {
-        // Always use MongoDB _id from donation state - validation ensures it's a valid ObjectId
         const campaignId = donation._id || donation.campaignId
         const donorId = user?._id || user?.id
         
         console.log('[Checkout] campaignId source:', { _id: donation._id, campaignId: donation.campaignId, resolved: campaignId })
         console.log('[Checkout] donorId source:', { _id: user?._id, id: user?.id, resolved: donorId })
         
-        // Fallback values if not set
         const donorName = donation.donorName || user?.name || user?.email || 'Anonymous Donor'
         const donorEmail = donation.donorEmail || user?.email || ''
         const ngoName = donation.ngoName || 'Organization'
@@ -77,7 +75,6 @@ const Checkout = () => {
           throw new Error('Campaign ID is missing')
         }
         
-        // Validate MongoDB ObjectId format (24 hex characters) - required for database operations
         const isValidObjectId = /^[0-9a-f]{24}$/i.test(String(campaignId))
         if (!isValidObjectId) {
           console.error('Invalid campaign ID format:', { campaignId, type: typeof campaignId, length: String(campaignId).length })
@@ -107,7 +104,6 @@ const Checkout = () => {
 
         console.log('Final donation data being sent:', donationData)
 
-        // Submit donation to backend
         const response = await donationService.submitDonation(donationData)
         console.log('Donation response:', response.data)
 

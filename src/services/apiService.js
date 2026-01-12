@@ -25,7 +25,6 @@ const authService = {
   ngoSignup: (data) => apiClient.post('/ngo/signup', data),
   ngoSignin: (data) => apiClient.post('/ngo/signin', data),
   getAllNGOs: () => apiClient.get('/ngo/all'),
-  // Campaign methods
   createCampaign: (data) => apiClient.post('/campaign/create', data),
   getAllCampaigns: () => apiClient.get('/campaign/all'),
   getActiveCampaigns: () => apiClient.get('/campaign/all?status=active'),

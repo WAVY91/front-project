@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import '../styles/CampaignCard.css'
 
 const CampaignCard = ({ campaign }) => {
-  // Safe fallbacks for all fields
   const raisedAmount = campaign.raisedAmount || 0
   const goalAmount = campaign.goalAmount || 1
   const progressPercentage = (raisedAmount / goalAmount) * 100

@@ -112,12 +112,9 @@ const campaignSlice = createSlice({
       state.error = null
     },
     fetchCampaignsSuccess: (state, action) => {
-      // Support both backend campaigns (with _id) and frontend campaigns (with id)
       state.campaigns = action.payload.map((campaign) => ({
         ...campaign,
-        // Add id field if it has _id from backend
         id: campaign.id || campaign._id,
-        // Keep _id if present
         _id: campaign._id,
       }))
       state.loading = false
