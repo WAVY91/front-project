@@ -18,7 +18,7 @@ apiClient.interceptors.request.use((config) => {
 }, (error) => Promise.reject(error))
 
 const campaignService = {
-  createCampaign: (data) => apiClient.post('/campaign/create', data),
+  createCampaign: (data) => apiClient.post('/campaign/add', data),
   getAllCampaigns: () => apiClient.get('/campaign/all'),
   getCampaignById: (id) => apiClient.get(`/campaign/${id}`),
   updateCampaign: (id, data) => apiClient.patch(`/campaign/${id}`, data),
