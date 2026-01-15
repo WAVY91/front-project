@@ -52,7 +52,14 @@ const Campaign = () => {
     })
 
     if (sortBy === 'newest') {
-      filtered.sort((a, b) => b.id - a.id)
+      filtered.sort((a, b) => {
+        const valA = a._id || a.id;
+        const valB = b._id || b.id;
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          return valB - valA;
+        }
+        return String(valB).localeCompare(String(valA));
+      })
     } else if (sortBy === 'mostFunded') {
       filtered.sort((a, b) => b.raisedAmount - a.raisedAmount)
     } else if (sortBy === 'endingSoon') {
@@ -109,7 +116,7 @@ const Campaign = () => {
       {filteredCampaigns.length > 0 ? (
         <div className="campaigns-list">
           {filteredCampaigns.map((campaign) => (
-            <CampaignCard key={campaign.id} campaign={campaign} />
+            <CampaignCard key={campaign._id || campaign.id} campaign={campaign} />
           ))}
         </div>
       ) : (

@@ -58,7 +58,8 @@ const NGODashboard = () => {
   }
 
   const ngoName = user.ngoName || 'Your Organization'
-  const ngoCampaigns = campaigns.filter((c) => c.ngoName === ngoName)
+  const ngoId = user._id || user.id
+  const ngoCampaigns = campaigns.filter((c) => c.ngoId === ngoId || c.ngoName === ngoName)
   const totalFundsRaised = ngoCampaigns.reduce((sum, c) => sum + c.raisedAmount, 0)
   const totalDonors = ngoCampaigns.reduce((sum, c) => sum + c.donors, 0)
 
@@ -73,6 +74,7 @@ const NGODashboard = () => {
         category: values.category,
         daysLeft: parseInt(values.daysLeft),
         image: values.image,
+        status: 'active',
       })
 
       if (response.data.success) {
@@ -355,11 +357,20 @@ const NGODashboard = () => {
         {ngoCampaigns.length > 0 ? (
           <div className="campaigns-list">
             {ngoCampaigns.map((campaign) => {
-              const progressPercentage = (campaign.raisedAmount / campaign.goalAmount) * 100
+              const progressPercentage = (campaign.raisedAmount / (campaign.goalAmount || 1)) * 100
+              const imageUrl = campaign.image || 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+              const campaignId = campaign._id || campaign.id
+              
               return (
-                <div key={campaign.id} className="campaign-card-dashboard">
+                <div key={campaignId} className="campaign-card-dashboard">
                   <div className="campaign-card-image">
-                    <img src={campaign.image} alt={campaign.title} />
+                    <img 
+                      src={imageUrl} 
+                      alt={campaign.title} 
+                      onError={(e) => {
+                        e.target.src = 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                      }}
+                    />
                   </div>
                   <div className="campaign-card-info">
                     <h3>{campaign.title}</h3>
@@ -391,7 +402,7 @@ const NGODashboard = () => {
                       ✏ Edit
                     </button>
                     <button
-                      onClick={() => handleDeleteCampaign(campaign.id)}
+                      onClick={() => handleDeleteCampaign(campaignId)}
                       className="btn btn-danger"
                     >
                       🗑 Delete

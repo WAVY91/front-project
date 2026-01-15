@@ -28,7 +28,9 @@ const CampaignDetail = () => {
     )
   }
 
-  const progressPercentage = (campaign.raisedAmount / campaign.goalAmount) * 100
+  const progressPercentage = (campaign.raisedAmount / (campaign.goalAmount || 1)) * 100
+  const imageUrl = campaign.image || 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+  const daysLeft = campaign.daysLeft || 30
 
   const handleDonate = () => {
     if (!user) {
@@ -44,7 +46,9 @@ const CampaignDetail = () => {
 
       <div className="campaign-detail-container">
         <div className="campaign-detail-image">
-          <img src={campaign.image} alt={campaign.title} />
+          <img src={imageUrl} alt={campaign.title} onError={(e) => {
+            e.target.src = 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+          }} />
           {campaign.verified && <div className="verified-badge">✓ Verified</div>}
         </div>
 
@@ -83,7 +87,7 @@ const CampaignDetail = () => {
                 <span className="stat-label">Donors</span>
               </div>
               <div className="stat">
-                <span className="stat-value">{campaign.daysLeft || 'N/A'}</span>
+                <span className="stat-value">{daysLeft}</span>
                 <span className="stat-label">Days Left</span>
               </div>
             </div>
@@ -119,7 +123,13 @@ const CampaignDetail = () => {
             .filter((c) => c.ngoId === campaign.ngoId && (c._id !== campaign._id && c.id !== campaign.id))
             .map((c) => (
               <Link key={c._id || c.id} to={`/campaign/${c._id || c.id}`} className="related-card">
-                <img src={c.image} alt={c.title} />
+                <img 
+                  src={c.image || 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'} 
+                  alt={c.title} 
+                  onError={(e) => {
+                    e.target.src = 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                  }}
+                />
                 <h4>{c.title}</h4>
               </Link>
             ))}

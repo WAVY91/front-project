@@ -71,7 +71,7 @@ const userSlice = createSlice({
       state.pendingNGOs.push(newNGO)
     },
     approveNGO: (state, action) => {
-      const ngoIndex = state.pendingNGOs.findIndex((n) => n.id === action.payload)
+      const ngoIndex = state.pendingNGOs.findIndex((n) => n.id === action.payload || n._id === action.payload)
       if (ngoIndex !== -1) {
         const ngo = state.pendingNGOs[ngoIndex]
         ngo.verified = true
@@ -81,7 +81,7 @@ const userSlice = createSlice({
       }
     },
     rejectNGO: (state, action) => {
-      const ngoIndex = state.pendingNGOs.findIndex((n) => n.id === action.payload)
+      const ngoIndex = state.pendingNGOs.findIndex((n) => n.id === action.payload || n._id === action.payload)
       if (ngoIndex !== -1) {
         state.pendingNGOs.splice(ngoIndex, 1)
       }

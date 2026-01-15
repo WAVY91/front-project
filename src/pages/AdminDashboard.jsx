@@ -329,36 +329,39 @@ const AdminDashboard = () => {
           <h2>Pending Campaign Verification</h2>
           {pendingCampaigns.length > 0 ? (
             <div className="admin-list">
-              {pendingCampaigns.map((campaign) => (
-                <div key={campaign.id} className="admin-item">
-                  <div className="admin-item-info">
-                    <h3>{campaign.title}</h3>
-                    <p className="admin-ngo">NGO: {campaign.ngoName}</p>
-                    <p className="admin-description">{campaign.description}</p>
-                    <p className="admin-goal">Goal: ₦{campaign.goalAmount.toLocaleString()}</p>
+              {pendingCampaigns.map((campaign) => {
+                const campaignId = campaign._id || campaign.id
+                return (
+                  <div key={campaignId} className="admin-item">
+                    <div className="admin-item-info">
+                      <h3>{campaign.title}</h3>
+                      <p className="admin-ngo">NGO: {campaign.ngoName}</p>
+                      <p className="admin-description">{campaign.description}</p>
+                      <p className="admin-goal">Goal: ₦{campaign.goalAmount.toLocaleString()}</p>
+                    </div>
+                    <div className="admin-item-actions">
+                      <button
+                        onClick={() => handleVerifyCampaign(campaignId)}
+                        className="btn btn-success"
+                      >
+                        ✓ Verify
+                      </button>
+                      <button
+                        onClick={() => handleRejectCampaign(campaignId)}
+                        className="btn btn-danger"
+                      >
+                        ✕ Reject
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCampaign(campaignId)}
+                        className="btn btn-danger"
+                      >
+                        🗑 Delete
+                      </button>
+                    </div>
                   </div>
-                  <div className="admin-item-actions">
-                    <button
-                      onClick={() => handleVerifyCampaign(campaign.id)}
-                      className="btn btn-success"
-                    >
-                      ✓ Verify
-                    </button>
-                    <button
-                      onClick={() => handleRejectCampaign(campaign.id)}
-                      className="btn btn-danger"
-                    >
-                      ✕ Reject
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCampaign(campaign.id)}
-                      className="btn btn-danger"
-                    >
-                      🗑 Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <div className="empty-state">
@@ -396,26 +399,29 @@ const AdminDashboard = () => {
           <h2>Approved Campaigns</h2>
           {campaigns.filter((c) => c.status === 'active' || c.status === 'approved' || c.verified).length > 0 ? (
             <div className="admin-list">
-              {campaigns.filter((c) => c.status === 'active' || c.status === 'approved' || c.verified).map((campaign) => (
-                <div key={campaign.id} className="admin-item">
-                  <div className="admin-item-info">
-                    <h3>{campaign.title}</h3>
-                    <p className="admin-ngo">NGO: {campaign.ngoName}</p>
-                    <p className="admin-description">{campaign.description}</p>
-                    <p className="admin-goal">Goal: ₦{campaign.goalAmount.toLocaleString()}</p>
-                    <p className="admin-raised">Raised: ₦{campaign.raisedAmount.toLocaleString()} ({Math.round((campaign.raisedAmount / campaign.goalAmount) * 100)}%)</p>
-                    <p className="admin-doc">Status: <span className={`status-badge ${campaign.status}`}>{campaign.status}</span></p>
+              {campaigns.filter((c) => c.status === 'active' || c.status === 'approved' || c.verified).map((campaign) => {
+                const campaignId = campaign._id || campaign.id
+                return (
+                  <div key={campaignId} className="admin-item">
+                    <div className="admin-item-info">
+                      <h3>{campaign.title}</h3>
+                      <p className="admin-ngo">NGO: {campaign.ngoName}</p>
+                      <p className="admin-description">{campaign.description}</p>
+                      <p className="admin-goal">Goal: ₦{campaign.goalAmount.toLocaleString()}</p>
+                      <p className="admin-raised">Raised: ₦{campaign.raisedAmount.toLocaleString()} ({Math.round((campaign.raisedAmount / (campaign.goalAmount || 1)) * 100)}%)</p>
+                      <p className="admin-doc">Status: <span className={`status-badge ${campaign.status}`}>{campaign.status}</span></p>
+                    </div>
+                    <div className="admin-item-actions">
+                      <button
+                        onClick={() => handleDeleteCampaign(campaignId)}
+                        className="btn btn-danger"
+                      >
+                        🗑 Delete
+                      </button>
+                    </div>
                   </div>
-                  <div className="admin-item-actions">
-                    <button
-                      onClick={() => handleDeleteCampaign(campaign.id)}
-                      className="btn btn-danger"
-                    >
-                      🗑 Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <div className="empty-state">
@@ -430,25 +436,28 @@ const AdminDashboard = () => {
           <h2>Rejected Campaigns</h2>
           {rejectedCampaigns.length > 0 ? (
             <div className="admin-list">
-              {rejectedCampaigns.map((campaign) => (
-                <div key={campaign.id} className="admin-item">
-                  <div className="admin-item-info">
-                    <h3>{campaign.title}</h3>
-                    <p className="admin-ngo">NGO: {campaign.ngoName}</p>
-                    <p className="admin-description">{campaign.description}</p>
-                    <p className="admin-goal">Goal: ₦{campaign.goalAmount.toLocaleString()}</p>
-                    <p className="admin-doc">Status: <span className={`status-badge ${campaign.status}`}>{campaign.status}</span></p>
+              {rejectedCampaigns.map((campaign) => {
+                const campaignId = campaign._id || campaign.id
+                return (
+                  <div key={campaignId} className="admin-item">
+                    <div className="admin-item-info">
+                      <h3>{campaign.title}</h3>
+                      <p className="admin-ngo">NGO: {campaign.ngoName}</p>
+                      <p className="admin-description">{campaign.description}</p>
+                      <p className="admin-goal">Goal: ₦{campaign.goalAmount.toLocaleString()}</p>
+                      <p className="admin-doc">Status: <span className={`status-badge ${campaign.status}`}>{campaign.status}</span></p>
+                    </div>
+                    <div className="admin-item-actions">
+                      <button
+                        onClick={() => handleDeleteCampaign(campaignId)}
+                        className="btn btn-danger"
+                      >
+                        🗑 Delete
+                      </button>
+                    </div>
                   </div>
-                  <div className="admin-item-actions">
-                    <button
-                      onClick={() => handleDeleteCampaign(campaign.id)}
-                      className="btn btn-danger"
-                    >
-                      🗑 Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           ) : (
             <div className="empty-state">

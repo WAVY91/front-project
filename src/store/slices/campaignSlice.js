@@ -124,20 +124,28 @@ const campaignSlice = createSlice({
       state.error = action.payload
     },
     addCampaign: (state, action) => {
+      const campaign = action.payload
       const newCampaign = {
-        ...action.payload,
-        id: action.payload.id || action.payload._id || (state.campaigns.length + 1),
-        raisedAmount: action.payload.raisedAmount || 0,
-        donors: action.payload.donors || 0,
-        verified: action.payload.verified || false,
-        status: action.payload.status || 'pending',
+        ...campaign,
+        id: campaign.id || campaign._id || (state.campaigns.length + 1),
+        _id: campaign._id,
+        raisedAmount: campaign.raisedAmount || 0,
+        donors: campaign.donors || 0,
+        verified: campaign.verified || false,
+        status: campaign.status || 'active',
       }
       state.campaigns.push(newCampaign)
     },
     updateCampaign: (state, action) => {
-      const index = state.campaigns.findIndex((c) => c.id === action.payload.id || c._id === action.payload._id)
+      const updatedCampaign = action.payload
+      const index = state.campaigns.findIndex((c) => c.id === updatedCampaign.id || c._id === updatedCampaign._id)
       if (index !== -1) {
-        state.campaigns[index] = action.payload
+        state.campaigns[index] = {
+          ...state.campaigns[index],
+          ...updatedCampaign,
+          id: updatedCampaign.id || updatedCampaign._id || state.campaigns[index].id,
+          _id: updatedCampaign._id || state.campaigns[index]._id
+        }
       }
     },
     verifyCampaign: (state, action) => {
