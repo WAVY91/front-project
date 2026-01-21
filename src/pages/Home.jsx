@@ -1,18 +1,32 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import CampaignCard from '../components/CampaignCard'
 import Counter from '../components/Counter'
+import apiService from '../services/apiService'
+import { fetchCampaignsSuccess } from '../store/slices/campaignSlice'
 import '../styles/Home.css'
 
 const API_URL = 'https://back-project-r1ur.onrender.com'
 
 const Home = () => {
+  const dispatch = useDispatch()
   const campaigns = useSelector((state) => state.campaigns.campaigns)
   const user = useSelector((state) => state.auth.user)
   const [totalDonors, setTotalDonors] = useState(0)
 
   useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await apiService.getActiveCampaigns()
+        if (response.data.success && Array.isArray(response.data.data)) {
+          dispatch(fetchCampaignsSuccess(response.data.data))
+        }
+      } catch (error) {
+        console.error('Error fetching campaigns:', error)
+      }
+    }
+
     const fetchTotalDonors = async () => {
       try {
         const response = await fetch(`${API_URL}/donor/all`)
@@ -25,11 +39,20 @@ const Home = () => {
       }
     }
 
+    fetchCampaigns()
     fetchTotalDonors()
-  }, [])
+  }, [dispatch])
+
+  const activeCampaignsList = campaigns
+    .filter((c) => c.status === 'active' || c.status === 'approved')
+    .sort((a, b) => {
+      const valA = a._id || a.id
+      const valB = b._id || b.id
+      return String(valB).localeCompare(String(valA))
+    })
 
   const totalFundsRaised = campaigns.reduce((sum, campaign) => sum + (campaign.raisedAmount || 0), 0)
-  const activeCampaigns = campaigns.filter(c => c.status === 'active').length
+  const activeCampaignsCount = activeCampaignsList.length
 
   return (
     <div className="home">
@@ -85,7 +108,7 @@ const Home = () => {
       <section className="campaigns-preview">
         <h2>Featured Campaigns</h2>
         <div className="campaigns-grid">
-          {campaigns.slice(0, 6).map((campaign) => (
+          {activeCampaignsList.slice(0, 6).map((campaign) => (
             <CampaignCard key={campaign._id || campaign.id} campaign={campaign} />
           ))}
         </div>
@@ -105,7 +128,7 @@ const Home = () => {
         </div>
         <div className="stat-item">
           <h3>
-            <Counter target={activeCampaigns || campaigns.length || 0} duration={2000} suffix="+" />
+            <Counter target={activeCampaignsCount || 0} duration={2000} suffix="+" />
           </h3>
           <p>Active Campaigns</p>
         </div>
