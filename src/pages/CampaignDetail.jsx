@@ -60,7 +60,7 @@ const CampaignDetail = () => {
 
           <div className="ngo-info">
             <div className="ngo-avatar">
-              {campaign.ngoName.charAt(0).toUpperCase()}
+              {campaign.ngoName?.charAt(0).toUpperCase() || '?'}
             </div>
             <div className="ngo-details">
               <h3>{campaign.ngoName}</h3>

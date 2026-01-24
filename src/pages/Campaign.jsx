@@ -43,7 +43,7 @@ const Campaign = () => {
     let filtered = activeCampaigns.filter((campaign) => {
       const matchesSearch =
         campaign.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campaign.ngoName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (campaign.ngoName?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
         campaign.description.toLowerCase().includes(searchTerm.toLowerCase())
 
       const matchesCategory = selectedCategory === 'All' || campaign.category === selectedCategory
