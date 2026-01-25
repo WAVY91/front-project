@@ -8,7 +8,7 @@ const CampaignCard = ({ campaign }) => {
   const progressPercentage = (raisedAmount / goalAmount) * 100
   const imageUrl = campaign.image || 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
   const category = campaign.category || 'Other'
-  const donors = campaign.donors || campaign.totalDonorsCount || 0
+  const donorsCount = Array.isArray(campaign.donors) ? campaign.donors.length : (campaign.donors || campaign.totalDonorsCount || 0)
   const daysLeft = campaign.daysLeft || 30
 
   return (
@@ -41,7 +41,7 @@ const CampaignCard = ({ campaign }) => {
           <div className="campaign-meta">
             <div className="meta-item">
               <span className="meta-label">Donors</span>
-              <span className="meta-value">{donors}</span>
+              <span className="meta-value">{donorsCount}</span>
             </div>
             <div className="meta-item">
               <span className="meta-label">Days Left</span>

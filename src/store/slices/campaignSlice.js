@@ -72,7 +72,13 @@ const campaignSlice = createSlice({
       const campaign = state.campaigns.find((c) => c.id === campaignId || c._id === campaignId)
       if (campaign) {
         campaign.raisedAmount += amount
-        campaign.donors = (campaign.donors || 0) + 1
+        if (Array.isArray(campaign.donors)) {
+          // If it's an array, we can't easily add the new donor object here without more info,
+          // but we should at least not crash. The next fetch will update it correctly.
+          // For now, we don't push to avoid state inconsistency if backend structure is complex.
+        } else {
+          campaign.donors = (campaign.donors || 0) + 1
+        }
         campaign.totalDonorsCount = (campaign.totalDonorsCount || 0) + 1
       }
     },

@@ -30,4 +30,12 @@ Implement the bug fix.
 3. [x] Run relevant tests (lint)
 4. [x] Update `/home/cena/Documents/level 3 project/frontend/.zencoder/chats/c4d5ef43-6297-4623-80b1-d5083847d738/investigation.md` with implementation notes and test results
 
-If blocked or uncertain, ask the user for direction.
+### [ ] Step: Investigation and Fix for React Error #31
+
+Analyze and fix "Objects are not valid as a React child" error.
+
+1. [ ] Search for rendering of donation/donor objects in the codebase
+2. [ ] Identify the component causing the crash
+3. [ ] Fix the rendering logic to use object properties
+4. [ ] Verify the fix with linting and manual check if possible
+

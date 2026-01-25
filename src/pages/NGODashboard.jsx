@@ -61,7 +61,10 @@ const NGODashboard = () => {
   const ngoId = user._id || user.id
   const ngoCampaigns = campaigns.filter((c) => c.ngoId === ngoId || c.ngoName === ngoName)
   const totalFundsRaised = ngoCampaigns.reduce((sum, c) => sum + c.raisedAmount, 0)
-  const totalDonors = ngoCampaigns.reduce((sum, c) => sum + c.donors, 0)
+  const totalDonors = ngoCampaigns.reduce((sum, c) => {
+    const count = Array.isArray(c.donors) ? c.donors.length : (c.donors || 0)
+    return sum + count
+  }, 0)
 
   const handleCreateCampaign = async (values) => {
     try {
@@ -390,7 +393,7 @@ const NGODashboard = () => {
                     </div>
                   </div>
                   <div className="campaign-card-meta">
-                    <p>Donors: {campaign.donors}</p>
+                    <p>Donors: {Array.isArray(campaign.donors) ? campaign.donors.length : (campaign.donors || 0)}</p>
                     <p>Days Left: {campaign.daysLeft}</p>
                     <span className={`status-badge ${campaign.status}`}>{campaign.status}</span>
                   </div>
