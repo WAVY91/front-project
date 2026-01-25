@@ -187,9 +187,9 @@ const NGODashboard = () => {
               initialValues={{
                 title: editingCampaign.title,
                 description: editingCampaign.description,
-                goalAmount: editingCampaign.goalAmount.toString(),
+                goalAmount: (editingCampaign.goalAmount || 0).toString(),
                 category: editingCampaign.category,
-                daysLeft: editingCampaign.daysLeft.toString(),
+                daysLeft: (editingCampaign.daysLeft || 0).toString(),
                 image: editingCampaign.image,
               }}
               validationSchema={campaignSchema}

@@ -1,0 +1,111 @@
+.how-it-works-page {
+  background-color: #fff;
+}
+
+.hiw-hero {
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 8rem 2rem;
+  text-align: center;
+}
+
+.hiw-hero h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+}
+
+.hiw-hero p {
+  font-size: 1.4rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.hiw-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+.hiw-step-section {
+  margin-bottom: 6rem;
+}
+
+.step-container {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.step-container.reverse {
+  flex-direction: row-reverse;
+}
+
+.step-number {
+  font-size: 8rem;
+  font-weight: 900;
+  color: #e2e8f0;
+  flex: 1;
+  text-align: center;
+  line-height: 1;
+}
+
+.step-text {
+  flex: 2;
+}
+
+.step-text h2 {
+  font-size: 2.5rem;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+}
+
+.step-text p {
+  font-size: 1.15rem;
+  color: #4a5568;
+  line-height: 1.8;
+}
+
+.hiw-cta {
+  background-color: #f7fafc;
+  padding: 5rem;
+  border-radius: 30px;
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.hiw-cta h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #1a202c;
+}
+
+.hiw-cta p {
+  font-size: 1.2rem;
+  color: #4a5568;
+  margin-bottom: 2.5rem;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+@media (max-width: 968px) {
+  .step-container, .step-container.reverse {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .step-number {
+    font-size: 5rem;
+  }
+  
+  .hiw-hero h1 {
+    font-size: 2.5rem;
+  }
+}

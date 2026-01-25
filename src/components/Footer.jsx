@@ -48,9 +48,9 @@ const Footer = () => {
             <h4>For NGOs</h4>
             <ul>
             <li><Link to="/signup">Register Your NGO</Link></li>
-            <li><a href="#faq">How It Works</a></li>
-            <li><a href="#support">Get Support</a></li>
-            <li><a href="#verification">Verification Process</a></li>
+            <li><Link to="/how-it-works">How It Works</Link></li>
+            <li><Link to="/support">Get Support</Link></li>
+            <li><Link to="/verification">Verification Process</Link></li>
             </ul>
         </div>
 
@@ -59,8 +59,8 @@ const Footer = () => {
             <ul>
             <li><Link to="/campaigns">Browse Campaigns</Link></li>
             <li><Link to="/faq">FAQ</Link></li>
-            <li><a href="#impact">Track Impact</a></li>
-            <li><a href="#transparency">Transparency Reports</a></li>
+            <li><Link to="/impact">Track Impact</Link></li>
+            <li><Link to="/transparency">Transparency Reports</Link></li>
             </ul>
         </div>
         </div>

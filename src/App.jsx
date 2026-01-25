@@ -18,6 +18,10 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Faq from './pages/Faq'
 import Impact from './pages/Impart'
+import Transparency from './pages/Transparency'
+import HowItWorks from './pages/HowItWorks'
+import Support from './pages/Support'
+import Verification from './pages/Verification'
 
 const App = () => {
   return (
@@ -38,6 +42,10 @@ const App = () => {
         <Route path='/contact' element={<Contact />} />
         <Route path='/faq' element={<Faq />} />
         <Route path='/impact' element={<Impact />} />
+        <Route path='/transparency' element={<Transparency />} />
+        <Route path='/how-it-works' element={<HowItWorks />} />
+        <Route path='/support' element={<Support />} />
+        <Route path='/verification' element={<Verification />} />
       </Routes>
       <Footer />
     </>
