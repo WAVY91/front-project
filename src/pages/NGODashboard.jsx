@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../store/slices/authSlice'
-import { addCampaign, updateCampaign, deleteCampaign, fetchCampaignsSuccess } from '../store/slices/campaignSlice'
+import {
+  addCampaign,
+  updateCampaign,
+  deleteCampaign,
+  fetchCampaignsSuccess
+} from '../store/slices/campaignSlice'
 import campaignService from '../services/campaignService'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
@@ -26,23 +31,30 @@ const NGODashboard = () => {
   const [editingCampaign, setEditingCampaign] = useState(null)
   const [showEditForm, setShowEditForm] = useState(false)
 
+  // ---------------------------
+  // Fetch campaigns for this NGO
+  // ---------------------------
   useEffect(() => {
-    const fetchCampaigns = async () => {
+    const fetchNGOCampaigns = async () => {
       try {
-        const response = await campaignService.getAllCampaigns()
+        const ngoId = user._id || user.id
+        const response = await campaignService.getNGOCampaigns(ngoId)
         if (response.data.success) {
           dispatch(fetchCampaignsSuccess(response.data.data))
         }
       } catch (error) {
-        console.error('Error fetching campaigns:', error)
+        console.error('Error fetching NGO campaigns:', error)
       }
     }
 
     if (user && user.role === 'ngo') {
-      fetchCampaigns()
+      fetchNGOCampaigns()
     }
   }, [user, dispatch])
 
+  // ---------------------------
+  // Access control
+  // ---------------------------
   if (!user || user.role !== 'ngo') {
     return (
       <div className="dashboard-container">
@@ -57,22 +69,28 @@ const NGODashboard = () => {
     )
   }
 
+  // ---------------------------
+  // Computed NGO stats
+  // ---------------------------
   const ngoName = user.ngoName || 'Your Organization'
   const ngoId = user._id || user.id
-  const ngoCampaigns = campaigns.filter((c) => c.ngoId === ngoId || c.ngoName === ngoName)
-  const totalFundsRaised = ngoCampaigns.reduce((sum, c) => sum + c.raisedAmount, 0)
+  const ngoCampaigns = campaigns.filter((c) => c.ngoId === ngoId)
+  const totalFundsRaised = ngoCampaigns.reduce((sum, c) => sum + (c.raisedAmount || 0), 0)
   const totalDonors = ngoCampaigns.reduce((sum, c) => {
     const count = Array.isArray(c.donors) ? c.donors.length : (c.donors || 0)
     return sum + count
   }, 0)
 
+  // ---------------------------
+  // Handlers
+  // ---------------------------
   const handleCreateCampaign = async (values) => {
     try {
       const response = await campaignService.createCampaign({
         title: values.title,
         description: values.description,
         ngoName: ngoName,
-        ngoId: user._id || user.id,
+        ngoId: ngoId,
         goalAmount: parseInt(values.goalAmount),
         category: values.category,
         daysLeft: parseInt(values.daysLeft),
@@ -134,6 +152,9 @@ const NGODashboard = () => {
     }
   }
 
+  // ---------------------------
+  // Render dashboard
+  // ---------------------------
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -141,7 +162,13 @@ const NGODashboard = () => {
           <h1>NGO Dashboard</h1>
           <p>Organization: {ngoName}</p>
         </div>
-        <button onClick={() => { dispatch(logout()); navigate('/'); }} className="logout-btn">
+        <button
+          onClick={() => {
+            dispatch(logout())
+            navigate('/')
+          }}
+          className="logout-btn"
+        >
           Logout
         </button>
       </div>
@@ -172,206 +199,54 @@ const NGODashboard = () => {
       <div className="dashboard-section">
         <div className="section-header">
           <h2>My Campaigns</h2>
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="btn btn-primary"
-          >
+          <button onClick={() => setShowCreateForm(!showCreateForm)} className="btn btn-primary">
             {showCreateForm ? 'Cancel' : '+ Create Campaign'}
           </button>
         </div>
 
         {showEditForm && editingCampaign && (
-          <div className="create-form-container" style={{ backgroundColor: '#f0f4ff', borderLeft: '4px solid #667eea' }}>
-            <h3>Edit Campaign: {editingCampaign.title}</h3>
-            <Formik
-              initialValues={{
-                title: editingCampaign.title,
-                description: editingCampaign.description,
-                goalAmount: (editingCampaign.goalAmount || 0).toString(),
-                category: editingCampaign.category,
-                daysLeft: (editingCampaign.daysLeft || 0).toString(),
-                image: editingCampaign.image,
-              }}
-              validationSchema={campaignSchema}
-              onSubmit={handleUpdateCampaign}
-            >
-              {() => (
-                <Form className="campaign-form">
-                  <div className="form-group">
-                    <label>Campaign Title</label>
-                    <Field name="title" type="text" placeholder="Enter campaign title" />
-                    <ErrorMessage name="title" component="span" className="error" />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Description</label>
-                    <Field
-                      name="description"
-                      as="textarea"
-                      placeholder="Describe your campaign"
-                    />
-                    <ErrorMessage name="description" component="span" className="error" />
-                  </div>
-
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Goal Amount (₦)</label>
-                      <Field
-                        name="goalAmount"
-                        type="number"
-                        placeholder="Enter goal amount"
-                      />
-                      <ErrorMessage name="goalAmount" component="span" className="error" />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Days for Campaign</label>
-                      <Field name="daysLeft" type="number" placeholder="Number of days" />
-                      <ErrorMessage name="daysLeft" component="span" className="error" />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Category</label>
-                    <Field name="category" as="select">
-                      <option>Health</option>
-                      <option>Education</option>
-                      <option>Emergency</option>
-                      <option>Electricity</option>
-                      <option>Food</option>
-                      <option>Shelter</option>
-                    </Field>
-                    <ErrorMessage name="category" component="span" className="error" />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Campaign Image URL</label>
-                    <Field
-                      name="image"
-                      type="url"
-                      placeholder="Enter campaign image URL (e.g., https://...)"
-                    />
-                    <ErrorMessage name="image" component="span" className="error" />
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button type="submit" className="btn btn-primary">
-                      Update Campaign
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditingCampaign(null)
-                        setShowEditForm(false)
-                      }}
-                      className="btn btn-danger"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </div>
+          <CampaignForm
+            key={editingCampaign._id || editingCampaign.id}
+            initialValues={editingCampaign}
+            onSubmit={handleUpdateCampaign}
+            onCancel={() => { setEditingCampaign(null); setShowEditForm(false) }}
+            isEdit
+          />
         )}
 
         {showCreateForm && (
-          <div className="create-form-container">
-            <Formik
-              initialValues={{
-                title: '',
-                description: '',
-                goalAmount: '',
-                category: 'Health',
-                daysLeft: '30',
-                image: '',
-              }}
-              validationSchema={campaignSchema}
-              onSubmit={handleCreateCampaign}
-            >
-              {() => (
-                <Form className="campaign-form">
-                  <div className="form-group">
-                    <label>Campaign Title</label>
-                    <Field name="title" type="text" placeholder="Enter campaign title" />
-                    <ErrorMessage name="title" component="span" className="error" />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Description</label>
-                    <Field
-                      name="description"
-                      as="textarea"
-                      placeholder="Describe your campaign"
-                    />
-                    <ErrorMessage name="description" component="span" className="error" />
-                  </div>
-
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Goal Amount (₦)</label>
-                      <Field
-                        name="goalAmount"
-                        type="number"
-                        placeholder="Enter goal amount"
-                      />
-                      <ErrorMessage name="goalAmount" component="span" className="error" />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Days for Campaign</label>
-                      <Field name="daysLeft" type="number" placeholder="Number of days" />
-                      <ErrorMessage name="daysLeft" component="span" className="error" />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Category</label>
-                    <Field name="category" as="select">
-                      <option>Health</option>
-                      <option>Education</option>
-                      <option>Emergency</option>
-                      <option>Electricity</option>
-                      <option>Food</option>
-                      <option>Shelter</option>
-                    </Field>
-                    <ErrorMessage name="category" component="span" className="error" />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Campaign Image URL</label>
-                    <Field
-                      name="image"
-                      type="url"
-                      placeholder="Enter campaign image URL (e.g., https://...)"
-                    />
-                    <ErrorMessage name="image" component="span" className="error" />
-                  </div>
-
-                  <button type="submit" className="btn btn-primary">
-                    Create Campaign
-                  </button>
-                </Form>
-              )}
-            </Formik>
-          </div>
+          <CampaignForm
+            initialValues={{
+              title: '',
+              description: '',
+              goalAmount: '',
+              category: 'Health',
+              daysLeft: '30',
+              image: '',
+            }}
+            onSubmit={handleCreateCampaign}
+            onCancel={() => setShowCreateForm(false)}
+          />
         )}
 
         {ngoCampaigns.length > 0 ? (
           <div className="campaigns-list">
             {ngoCampaigns.map((campaign) => {
               const progressPercentage = (campaign.raisedAmount / (campaign.goalAmount || 1)) * 100
-              const imageUrl = campaign.image || 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+              const imageUrl =
+                campaign.image ||
+                'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
               const campaignId = campaign._id || campaign.id
-              
+
               return (
                 <div key={campaignId} className="campaign-card-dashboard">
                   <div className="campaign-card-image">
-                    <img 
-                      src={imageUrl} 
-                      alt={campaign.title} 
+                    <img
+                      src={imageUrl}
+                      alt={campaign.title}
                       onError={(e) => {
-                        e.target.src = 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                        e.target.src =
+                          'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
                       }}
                     />
                   </div>
@@ -380,15 +255,11 @@ const NGODashboard = () => {
                     <p>{campaign.description}</p>
                     <div className="campaign-progress">
                       <div className="progress-bar">
-                        <div
-                          className="progress-fill"
-                          style={{ width: `${progressPercentage}%` }}
-                        ></div>
+                        <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
                       </div>
                       <p className="progress-text">
                         ₦{campaign.raisedAmount.toLocaleString()} / ₦
-                        {campaign.goalAmount.toLocaleString()}{' '}
-                        ({Math.round(progressPercentage)}%)
+                        {campaign.goalAmount.toLocaleString()} ({Math.round(progressPercentage)}%)
                       </p>
                     </div>
                   </div>
@@ -398,16 +269,10 @@ const NGODashboard = () => {
                     <span className={`status-badge ${campaign.status}`}>{campaign.status}</span>
                   </div>
                   <div className="campaign-card-actions">
-                    <button
-                      onClick={() => handleEditCampaign(campaign)}
-                      className="btn btn-primary"
-                    >
+                    <button onClick={() => handleEditCampaign(campaign)} className="btn btn-primary">
                       ✏ Edit
                     </button>
-                    <button
-                      onClick={() => handleDeleteCampaign(campaignId)}
-                      className="btn btn-danger"
-                    >
+                    <button onClick={() => handleDeleteCampaign(campaignId)} className="btn btn-danger">
                       🗑 Delete
                     </button>
                   </div>
@@ -418,10 +283,7 @@ const NGODashboard = () => {
         ) : (
           <div className="empty-state">
             <p>You haven't created any campaigns yet.</p>
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="btn btn-primary"
-            >
+            <button onClick={() => setShowCreateForm(true)} className="btn btn-primary">
               Create Your First Campaign
             </button>
           </div>
@@ -442,6 +304,86 @@ const NGODashboard = () => {
           <button className="btn btn-primary">Download Reports</button>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ---------------------------
+// Campaign Form Component
+// ---------------------------
+const CampaignForm = ({ initialValues, onSubmit, onCancel, isEdit }) => {
+  return (
+    <div className={`create-form-container ${isEdit ? 'edit-form' : ''}`}>
+      <Formik
+        initialValues={{
+          title: initialValues.title || '',
+          description: initialValues.description || '',
+          goalAmount: (initialValues.goalAmount || '').toString(),
+          category: initialValues.category || 'Health',
+          daysLeft: (initialValues.daysLeft || '30').toString(),
+          image: initialValues.image || '',
+        }}
+        validationSchema={campaignSchema}
+        onSubmit={onSubmit}
+      >
+        {() => (
+          <Form className="campaign-form">
+            <div className="form-group">
+              <label>Campaign Title</label>
+              <Field name="title" type="text" placeholder="Enter campaign title" />
+              <ErrorMessage name="title" component="span" className="error" />
+            </div>
+
+            <div className="form-group">
+              <label>Description</label>
+              <Field name="description" as="textarea" placeholder="Describe your campaign" />
+              <ErrorMessage name="description" component="span" className="error" />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Goal Amount (₦)</label>
+                <Field name="goalAmount" type="number" placeholder="Enter goal amount" />
+                <ErrorMessage name="goalAmount" component="span" className="error" />
+              </div>
+
+              <div className="form-group">
+                <label>Days for Campaign</label>
+                <Field name="daysLeft" type="number" placeholder="Number of days" />
+                <ErrorMessage name="daysLeft" component="span" className="error" />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Category</label>
+              <Field name="category" as="select">
+                <option>Health</option>
+                <option>Education</option>
+                <option>Emergency</option>
+                <option>Electricity</option>
+                <option>Food</option>
+                <option>Shelter</option>
+              </Field>
+              <ErrorMessage name="category" component="span" className="error" />
+            </div>
+
+            <div className="form-group">
+              <label>Campaign Image URL</label>
+              <Field name="image" type="url" placeholder="Enter campaign image URL (e.g., https://...)" />
+              <ErrorMessage name="image" component="span" className="error" />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button type="submit" className="btn btn-primary">
+                {isEdit ? 'Update Campaign' : 'Create Campaign'}
+              </button>
+              <button type="button" onClick={onCancel} className="btn btn-danger">
+                Cancel
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </div>
   )
 }
