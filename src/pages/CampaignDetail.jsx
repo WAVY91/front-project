@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { setCurrentDonation } from '../store/slices/donationSlice'
@@ -7,13 +7,33 @@ import '../styles/CampaignDetail.css'
 const CampaignDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.user)
   const campaigns = useSelector((state) => state.campaigns.campaigns)
-  
-  const campaign = campaigns.find((c) => 
-    c._id === id || c.id === parseInt(id)
-  )
+
+  const [campaign, setCampaign] = useState(null)
+  const [relatedCampaigns, setRelatedCampaigns] = useState([])
   const [showDonationModal, setShowDonationModal] = useState(false)
+
+  // Find campaign from Redux
+  useEffect(() => {
+    const found = campaigns.find((c) => c._id === id || c.id === parseInt(id))
+    setCampaign(found)
+  }, [id, campaigns])
+
+  // Fetch related campaigns from backend
+  useEffect(() => {
+    if (campaign?.ngoId) {
+      fetch(`https://your-backend.com/campaign/ngo/${campaign.ngoId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          // Exclude current campaign
+          const filtered = data.filter((c) => c._id !== campaign._id)
+          setRelatedCampaigns(filtered)
+        })
+        .catch((err) => console.error('Error fetching related campaigns:', err))
+    }
+  }, [campaign])
 
   if (!campaign) {
     return (
@@ -29,7 +49,9 @@ const CampaignDetail = () => {
   }
 
   const progressPercentage = (campaign.raisedAmount / (campaign.goalAmount || 1)) * 100
-  const imageUrl = campaign.image || 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+  const imageUrl =
+    campaign.image ||
+    'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
   const daysLeft = campaign.daysLeft || 30
 
   const handleDonate = () => {
@@ -42,13 +64,20 @@ const CampaignDetail = () => {
 
   return (
     <div className="campaign-detail-page">
-      <Link to="/campaigns" className="back-link">← Back to Campaigns</Link>
+      <Link to="/campaigns" className="back-link">
+        ← Back to Campaigns
+      </Link>
 
       <div className="campaign-detail-container">
         <div className="campaign-detail-image">
-          <img src={imageUrl} alt={campaign.title} onError={(e) => {
-            e.target.src = 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
-          }} />
+          <img
+            src={imageUrl}
+            alt={campaign.title}
+            onError={(e) => {
+              e.target.src =
+                'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+            }}
+          />
           {campaign.verified && <div className="verified-badge">✓ Verified</div>}
         </div>
 
@@ -59,9 +88,7 @@ const CampaignDetail = () => {
           </div>
 
           <div className="ngo-info">
-            <div className="ngo-avatar">
-              {campaign.ngoName?.charAt(0).toUpperCase() || '?'}
-            </div>
+            <div className="ngo-avatar">{campaign.ngoName?.charAt(0).toUpperCase() || '?'}</div>
             <div className="ngo-details">
               <h3>{campaign.ngoName}</h3>
               <p>{campaign.description}</p>
@@ -113,40 +140,45 @@ const CampaignDetail = () => {
       <div className="campaign-description">
         <h2>About This Campaign</h2>
         <p>{campaign.description}</p>
-        <p>This is an important campaign run by {campaign.ngoName}, a verified organization committed to making a positive impact in the community. Your contribution will directly help us achieve our goals and create lasting change.</p>
+        <p>
+          This is an important campaign run by {campaign.ngoName}, a verified organization
+          committed to making a positive impact in the community. Your contribution will
+          directly help us achieve our goals and create lasting change.
+        </p>
       </div>
 
-      <div className="related-campaigns">
-        <h2>Other Campaigns by This NGO</h2>
-        <div className="related-grid">
-          {campaigns
-            .filter((c) => c.ngoId === campaign.ngoId && (c._id !== campaign._id && c.id !== campaign.id))
-            .map((c) => (
+      {relatedCampaigns.length > 0 && (
+        <div className="related-campaigns">
+          <h2>Other Campaigns by This NGO</h2>
+          <div className="related-grid">
+            {relatedCampaigns.map((c) => (
               <Link key={c._id || c.id} to={`/campaign/${c._id || c.id}`} className="related-card">
-                <img 
-                  src={c.image || 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'} 
-                  alt={c.title} 
+                <img
+                  src={
+                    c.image ||
+                    'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                  }
+                  alt={c.title}
                   onError={(e) => {
-                    e.target.src = 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                    e.target.src =
+                      'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
                   }}
                 />
                 <h4>{c.title}</h4>
               </Link>
             ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {showDonationModal && (
-        <DonationModal
-          campaign={campaign}
-          onClose={() => setShowDonationModal(false)}
-          user={user}
-        />
+        <DonationModal campaign={campaign} onClose={() => setShowDonationModal(false)} user={user} />
       )}
     </div>
   )
 }
 
+// ---------- Donation Modal ----------
 const DonationModal = ({ campaign, onClose, user }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -163,20 +195,18 @@ const DonationModal = ({ campaign, onClose, user }) => {
     }
 
     const campaignId = campaign._id && campaign._id.length > 2 ? campaign._id : campaign.id
-    console.log('Submitting donation with campaignId:', campaignId, 'Type:', typeof campaignId)
-    console.log('Campaign object:', { _id: campaign._id, id: campaign.id, selected: campaignId })
 
     dispatch(
       setCurrentDonation({
-        _id: campaign._id,  
-        campaignId: campaign._id && campaign._id.length > 2 ? campaign._id : campaign.id,  
+        _id: campaign._id,
+        campaignId: campaignId,
         campaignTitle: campaign.title,
         amount: parseFloat(amount),
         donorName: isAnonymous ? 'Anonymous' : donorName,
         donorEmail: isAnonymous ? '' : donorEmail,
         isAnonymous,
         ngoName: campaign.ngoName,
-        ngoId: campaign.ngoId,  
+        ngoId: campaign.ngoId,
       })
     )
 
@@ -188,7 +218,9 @@ const DonationModal = ({ campaign, onClose, user }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>×</button>
+        <button className="modal-close" onClick={onClose}>
+          ×
+        </button>
         <h2>Donate to {campaign.title}</h2>
 
         <form onSubmit={handleSubmit} className="donation-form">
