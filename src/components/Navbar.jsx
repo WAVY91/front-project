@@ -22,44 +22,51 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <Link to="/" className="nav-logo" onClick={closeMobileMenu}>
-          <span className="logo-icon">🏥</span>
-          Good Health
-        </Link>
+        <div className="nav-left">
+          <Link to="/" className="nav-logo" onClick={closeMobileMenu}>
+            <span className="logo-icon">🏥</span>
+            Good Health
+          </Link>
 
-        <div className="nav-menu">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/campaigns" className="nav-link">Campaigns</Link>
-          <Link to="/about" className="nav-link">About</Link>
-          <Link to="/impact" className="nav-link">Impact</Link>
-          <Link to="/contact" className="nav-link">Contact</Link>
-          {user && getDashboardLink() && (
-            <Link to={getDashboardLink()} className="nav-link">Dashboard</Link>
-          )}
+          <div className="nav-menu">
+            <Link to="/" className="nav-link">Home</Link>
+            <Link to="/campaigns" className="nav-link">Campaigns</Link>
+            <Link to="/about" className="nav-link">About</Link>
+            <Link to="/impact" className="nav-link">Impact</Link>
+          </div>
         </div>
 
-        <div className="nav-buttons">
-          {user ? (
-            <div className="user-menu">
-              <span className="user-name">{user.name}</span>
-              <span className="user-role">({user.role})</span>
-            </div>
-          ) : (
-            <>
-              <Link to="/signin" className="btn login-btn">
-                Sign In
-              </Link>
-              <Link to="/signup" className="btn signup-btn">
-                Sign Up
-              </Link>
-            </>
-          )}
-        </div>
+        <div className="nav-right">
+          <div className="nav-menu">
+            <Link to="/contact" className="nav-link">Contact</Link>
+            {user && getDashboardLink() && (
+              <Link to={getDashboardLink()} className="nav-link">Dashboard</Link>
+            )}
+          </div>
 
-        <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          <span></span>
-          <span></span>
-          <span></span>
+          <div className="nav-buttons">
+            {user ? (
+              <div className="user-menu">
+                <span className="user-name">{user.name}</span>
+                <span className="user-role">({user.role})</span>
+              </div>
+            ) : (
+              <>
+                <Link to="/signin" className="btn login-btn">
+                  Sign In
+                </Link>
+                <Link to="/signup" className="btn signup-btn">
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
+
+          <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
       </div>
 
