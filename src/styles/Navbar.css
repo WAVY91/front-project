@@ -16,19 +16,6 @@
   height: 80px;
 }
 
-.nav-left, .nav-right {
-  display: flex;
-  align-items: center;
-}
-
-.nav-left {
-  gap: 40px;
-}
-
-.nav-right {
-  gap: 30px;
-}
-
 .nav-logo {
   display: flex;
   align-items: center;
@@ -45,8 +32,11 @@
 
 .nav-menu {
   display: flex;
-  gap: 30px;
+  gap: 50px;
   align-items: center;
+  flex: 1;
+  justify-content: center;
+  margin: 0 40px;
 }
 
 .nav-link {
@@ -186,8 +176,7 @@
 }
 
 @media (max-width: 768px) {
-  .nav-left .nav-menu,
-  .nav-right .nav-menu {
+  .nav-menu {
     display: none;
   }
 

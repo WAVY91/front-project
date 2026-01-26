@@ -50,7 +50,7 @@ Save to `/home/cena/Documents/level 3 project/frontend/.zencoder/chats/ed374bb3-
 
 ---
 
-### [x] Step: Implementation
+### [ ] Step: Implementation
 
 Implement the task according to the technical specification and general engineering best practices.
 
