@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: #667eea;
   text-decoration: none;
@@ -35,9 +35,10 @@
 
 .nav-menu {
   display: flex;
-  gap: 40px;
+  gap: 45px;
   align-items: center;
   flex: 1;
+  justify-content: center;
 }
 
 .nav-spacer {
@@ -49,7 +50,7 @@
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .nav-link:hover {
@@ -81,7 +82,7 @@
 }
 
 .btn {
-  padding: 8px 16px;
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   font-weight: 600;
@@ -89,7 +90,7 @@
   text-decoration: none;
   display: inline-block;
   transition: all 0.3s ease;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .login-btn {
