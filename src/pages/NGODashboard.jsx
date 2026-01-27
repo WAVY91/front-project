@@ -40,7 +40,35 @@ const NGODashboard = () => {
         const ngoId = user._id || user.id
         const response = await campaignService.getNGOCampaigns(ngoId)
         if (response.data.success) {
-          dispatch(fetchCampaignsSuccess(response.data.data))
+          // Merge backend campaigns with existing Redux campaigns to preserve locally created ones
+          const backendCampaigns = response.data.data
+          const existingCampaigns = campaigns
+          
+          // Create a map of backend campaigns by ID
+          const backendMap = new Map()
+          backendCampaigns.forEach(campaign => {
+            const id = campaign._id || campaign.id
+            backendMap.set(id, campaign)
+          })
+          
+          // Keep existing campaigns that are in the current NGO
+          const preservedCampaigns = existingCampaigns.filter(c => c.ngoId === ngoId)
+          
+          // Merge: backend campaigns take priority for updates, but preserve local ones
+          const mergedCampaigns = preservedCampaigns.map(campaign => {
+            const id = campaign._id || campaign.id
+            return backendMap.has(id) ? backendMap.get(id) : campaign
+          })
+          
+          // Add any new backend campaigns that weren't in the local state
+          backendCampaigns.forEach(campaign => {
+            const id = campaign._id || campaign.id
+            if (!mergedCampaigns.find(c => (c._id || c.id) === id)) {
+              mergedCampaigns.push(campaign)
+            }
+          })
+          
+          dispatch(fetchCampaignsSuccess(mergedCampaigns))
         }
       } catch (error) {
         console.error('Error fetching NGO campaigns:', error)
@@ -48,9 +76,10 @@ const NGODashboard = () => {
     }
 
     if (user && user.role === 'ngo') {
+      // Only fetch on initial mount, not on every dependency change
       fetchNGOCampaigns()
     }
-  }, [user, dispatch])
+  }, [user?._id, user?.role])
 
   // ---------------------------
   // Access control
