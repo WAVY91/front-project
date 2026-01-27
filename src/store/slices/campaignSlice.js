@@ -11,7 +11,9 @@ const initialState = {
 const loadCampaignsFromStorage = () => {
   try {
     const stored = localStorage.getItem('campaigns_cache')
-    return stored ? JSON.parse(stored) : []
+    const campaigns = stored ? JSON.parse(stored) : []
+    console.log('[campaignSlice] Loaded campaigns from localStorage:', campaigns.length, 'campaigns')
+    return campaigns
   } catch (error) {
     console.error('Error loading campaigns from localStorage:', error)
     return []
@@ -22,6 +24,7 @@ const loadCampaignsFromStorage = () => {
 const saveCampaignsToStorage = (campaigns) => {
   try {
     localStorage.setItem('campaigns_cache', JSON.stringify(campaigns))
+    console.log('[campaignSlice] Saved campaigns to localStorage:', campaigns.length, 'campaigns')
   } catch (error) {
     console.error('Error saving campaigns to localStorage:', error)
   }

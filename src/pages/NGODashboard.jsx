@@ -30,48 +30,29 @@ const NGODashboard = () => {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingCampaign, setEditingCampaign] = useState(null)
   const [showEditForm, setShowEditForm] = useState(false)
-  const [hasInitiallyFetched, setHasInitiallyFetched] = useState(false)
 
   // ---------------------------
-  // Fetch campaigns for this NGO (only once on mount)
+  // Sync with backend on mount (but don't overwrite local campaigns)
   // ---------------------------
   useEffect(() => {
-    const fetchNGOCampaigns = async () => {
+    const syncNGOCampaigns = async () => {
       try {
         const ngoId = user._id || user.id
         const response = await campaignService.getNGOCampaigns(ngoId)
         if (response.data.success) {
-          // Get all campaigns and filter for this NGO
-          const allCampaigns = response.data.data
-          const ngoCampaigns = allCampaigns.filter(c => c.ngoId === ngoId)
-          
-          // Merge with existing campaigns in Redux to keep newly created ones
-          const existingCampaigns = campaigns.filter(c => c.ngoId === ngoId)
-          
-          // Create a set of backend campaign IDs for quick lookup
-          const backendIds = new Set(ngoCampaigns.map(c => c._id || c.id))
-          
-          // Keep all existing campaigns (including newly created ones not yet on backend)
-          const finalCampaigns = [
-            ...existingCampaigns,
-            ...ngoCampaigns.filter(bc => {
-              const id = bc._id || bc.id
-              return !existingCampaigns.some(ec => (ec._id || ec.id) === id)
-            })
-          ]
-          
-          dispatch(fetchCampaignsSuccess(finalCampaigns))
+          // Just dispatch to Redux - the reducer will merge with existing campaigns
+          dispatch(fetchCampaignsSuccess(response.data.data))
         }
       } catch (error) {
-        console.error('Error fetching NGO campaigns:', error)
+        console.error('Error syncing NGO campaigns:', error)
       }
-      setHasInitiallyFetched(true)
     }
 
-    if (user && user.role === 'ngo' && !hasInitiallyFetched) {
-      fetchNGOCampaigns()
+    if (user && user.role === 'ngo') {
+      // Sync with backend, but campaigns stay in Redux even if this fails
+      syncNGOCampaigns()
     }
-  }, [user?._id, user?.role, hasInitiallyFetched])
+  }, [user?._id, user?.role, dispatch])
 
   // ---------------------------
   // Access control
@@ -107,7 +88,8 @@ const NGODashboard = () => {
   // ---------------------------
   const handleCreateCampaign = async (values) => {
     try {
-      const response = await campaignService.createCampaign({
+      const ngoId = user._id || user.id
+      const campaignData = {
         title: values.title,
         description: values.description,
         ngoName: ngoName,
@@ -117,10 +99,21 @@ const NGODashboard = () => {
         daysLeft: parseInt(values.daysLeft),
         image: values.image,
         status: 'active',
-      })
+      }
+      
+      console.log('[NGODashboard] Creating campaign with ngoId:', ngoId)
+      const response = await campaignService.createCampaign(campaignData)
 
       if (response.data.success) {
-        dispatch(addCampaign(response.data.data))
+        const createdCampaign = response.data.data
+        console.log('[NGODashboard] Campaign created successfully:', createdCampaign)
+        
+        // Ensure ngoId is set on the campaign before adding to Redux
+        if (!createdCampaign.ngoId) {
+          createdCampaign.ngoId = ngoId
+        }
+        
+        dispatch(addCampaign(createdCampaign))
         setShowCreateForm(false)
         alert('Campaign created successfully!')
       }
