@@ -48,13 +48,19 @@ const campaignSlice = createSlice({
         _id: campaign._id,
       }))
       
+      console.log('[campaignSlice] fetchCampaignsSuccess - incoming campaigns:', incomingCampaigns.length)
+      console.log('[campaignSlice] Current campaigns in state:', state.campaigns.length)
+      
       // Merge incoming campaigns with existing ones
       // Keep existing campaigns that are not in the incoming list
       const incomingIds = new Set(incomingCampaigns.map(c => c._id || c.id))
       const preservedCampaigns = state.campaigns.filter(c => !incomingIds.has(c._id || c.id))
       
+      console.log('[campaignSlice] Preserved campaigns (not in backend):', preservedCampaigns.length)
+      
       // Combine: incoming campaigns (to sync backend changes) + preserved campaigns (local ones)
       state.campaigns = [...incomingCampaigns, ...preservedCampaigns]
+      console.log('[campaignSlice] Final campaigns after merge:', state.campaigns.length)
       state.loading = false
       state.lastFetchTime = Date.now()
       

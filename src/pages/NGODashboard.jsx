@@ -38,8 +38,13 @@ const NGODashboard = () => {
     const syncNGOCampaigns = async () => {
       try {
         const ngoId = user._id || user.id
+        console.log('[NGODashboard] Syncing campaigns for ngoId:', ngoId)
         const response = await campaignService.getNGOCampaigns(ngoId)
         if (response.data.success) {
+          console.log('[NGODashboard] Received campaigns from backend:', response.data.data.length)
+          response.data.data.forEach(c => {
+            console.log('[NGODashboard] Backend campaign:', c.title, 'ngoId:', c.ngoId, '_id:', c._id)
+          })
           // Just dispatch to Redux - the reducer will merge with existing campaigns
           dispatch(fetchCampaignsSuccess(response.data.data))
         }
