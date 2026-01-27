@@ -38,6 +38,8 @@ const Navbar = () => {
           )}
         </div>
 
+        <div className="nav-spacer"></div>
+
         <div className="nav-buttons">
           {user ? (
             <div className="user-menu">
