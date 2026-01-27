@@ -15,7 +15,7 @@
   padding: 0 30px;
   height: 80px;
   width: 100%;
-  gap: 160px;
+  gap: 60px;
 }
 
 .nav-logo {
@@ -60,7 +60,7 @@
 .nav-buttons {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   justify-content: space-around;
 }
 
