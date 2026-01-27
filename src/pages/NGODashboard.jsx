@@ -30,9 +30,10 @@ const NGODashboard = () => {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingCampaign, setEditingCampaign] = useState(null)
   const [showEditForm, setShowEditForm] = useState(false)
+  const [hasInitiallyFetched, setHasInitiallyFetched] = useState(false)
 
   // ---------------------------
-  // Fetch campaigns for this NGO
+  // Fetch campaigns for this NGO (only once on mount)
   // ---------------------------
   useEffect(() => {
     const fetchNGOCampaigns = async () => {
@@ -40,46 +41,37 @@ const NGODashboard = () => {
         const ngoId = user._id || user.id
         const response = await campaignService.getNGOCampaigns(ngoId)
         if (response.data.success) {
-          // Merge backend campaigns with existing Redux campaigns to preserve locally created ones
-          const backendCampaigns = response.data.data
-          const existingCampaigns = campaigns
+          // Get all campaigns and filter for this NGO
+          const allCampaigns = response.data.data
+          const ngoCampaigns = allCampaigns.filter(c => c.ngoId === ngoId)
           
-          // Create a map of backend campaigns by ID
-          const backendMap = new Map()
-          backendCampaigns.forEach(campaign => {
-            const id = campaign._id || campaign.id
-            backendMap.set(id, campaign)
-          })
+          // Merge with existing campaigns in Redux to keep newly created ones
+          const existingCampaigns = campaigns.filter(c => c.ngoId === ngoId)
           
-          // Keep existing campaigns that are in the current NGO
-          const preservedCampaigns = existingCampaigns.filter(c => c.ngoId === ngoId)
+          // Create a set of backend campaign IDs for quick lookup
+          const backendIds = new Set(ngoCampaigns.map(c => c._id || c.id))
           
-          // Merge: backend campaigns take priority for updates, but preserve local ones
-          const mergedCampaigns = preservedCampaigns.map(campaign => {
-            const id = campaign._id || campaign.id
-            return backendMap.has(id) ? backendMap.get(id) : campaign
-          })
+          // Keep all existing campaigns (including newly created ones not yet on backend)
+          const finalCampaigns = [
+            ...existingCampaigns,
+            ...ngoCampaigns.filter(bc => {
+              const id = bc._id || bc.id
+              return !existingCampaigns.some(ec => (ec._id || ec.id) === id)
+            })
+          ]
           
-          // Add any new backend campaigns that weren't in the local state
-          backendCampaigns.forEach(campaign => {
-            const id = campaign._id || campaign.id
-            if (!mergedCampaigns.find(c => (c._id || c.id) === id)) {
-              mergedCampaigns.push(campaign)
-            }
-          })
-          
-          dispatch(fetchCampaignsSuccess(mergedCampaigns))
+          dispatch(fetchCampaignsSuccess(finalCampaigns))
         }
       } catch (error) {
         console.error('Error fetching NGO campaigns:', error)
       }
+      setHasInitiallyFetched(true)
     }
 
-    if (user && user.role === 'ngo') {
-      // Only fetch on initial mount, not on every dependency change
+    if (user && user.role === 'ngo' && !hasInitiallyFetched) {
       fetchNGOCampaigns()
     }
-  }, [user?._id, user?.role])
+  }, [user?._id, user?.role, hasInitiallyFetched])
 
   // ---------------------------
   // Access control

@@ -4,6 +4,7 @@ const initialState = {
   campaigns: [],
   loading: false,
   error: null,
+  lastFetchTime: null,
 }
 
 const campaignSlice = createSlice({
@@ -15,12 +16,21 @@ const campaignSlice = createSlice({
       state.error = null
     },
     fetchCampaignsSuccess: (state, action) => {
-      state.campaigns = action.payload.map((campaign) => ({
+      const incomingCampaigns = action.payload.map((campaign) => ({
         ...campaign,
         id: campaign.id || campaign._id,
         _id: campaign._id,
       }))
+      
+      // Merge incoming campaigns with existing ones
+      // Keep existing campaigns that are not in the incoming list
+      const incomingIds = new Set(incomingCampaigns.map(c => c._id || c.id))
+      const preservedCampaigns = state.campaigns.filter(c => !incomingIds.has(c._id || c.id))
+      
+      // Combine: incoming campaigns (to sync backend changes) + preserved campaigns (local ones)
+      state.campaigns = [...incomingCampaigns, ...preservedCampaigns]
       state.loading = false
+      state.lastFetchTime = Date.now()
     },
     fetchCampaignsFailure: (state, action) => {
       state.loading = false
@@ -28,16 +38,33 @@ const campaignSlice = createSlice({
     },
     addCampaign: (state, action) => {
       const campaign = action.payload
-      const newCampaign = {
-        ...campaign,
-        id: campaign.id || campaign._id || (state.campaigns.length + 1),
-        _id: campaign._id,
-        raisedAmount: campaign.raisedAmount || 0,
-        donors: campaign.donors || 0,
-        verified: campaign.verified || false,
-        status: campaign.status || 'active',
+      
+      // Check if campaign already exists
+      const existingIndex = state.campaigns.findIndex(
+        c => (c._id || c.id) === (campaign._id || campaign.id)
+      )
+      
+      if (existingIndex !== -1) {
+        // Update existing campaign
+        state.campaigns[existingIndex] = {
+          ...state.campaigns[existingIndex],
+          ...campaign,
+          id: campaign.id || campaign._id || state.campaigns[existingIndex].id,
+          _id: campaign._id || state.campaigns[existingIndex]._id,
+        }
+      } else {
+        // Add new campaign
+        const newCampaign = {
+          ...campaign,
+          id: campaign.id || campaign._id || (state.campaigns.length + 1),
+          _id: campaign._id,
+          raisedAmount: campaign.raisedAmount || 0,
+          donors: campaign.donors || 0,
+          verified: campaign.verified || false,
+          status: campaign.status || 'active',
+        }
+        state.campaigns.push(newCampaign)
       }
-      state.campaigns.push(newCampaign)
     },
     updateCampaign: (state, action) => {
       const updatedCampaign = action.payload
