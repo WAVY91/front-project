@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../store/slices/authSlice'
@@ -30,12 +30,15 @@ const NGODashboard = () => {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingCampaign, setEditingCampaign] = useState(null)
   const [showEditForm, setShowEditForm] = useState(false)
+  const hasSyncedRef = useRef(false)
 
   // ---------------------------
-  // Sync with backend on mount (but don't overwrite local campaigns)
+  // Sync with backend every time component mounts
   // ---------------------------
   useEffect(() => {
     const syncNGOCampaigns = async () => {
+      if (!user || user.role !== 'ngo') return
+      
       try {
         const ngoId = user._id || user.id
         console.log('[NGODashboard] Syncing campaigns for ngoId:', ngoId)
@@ -53,17 +56,18 @@ const NGODashboard = () => {
           })
           // Just dispatch to Redux - the reducer will merge with existing campaigns
           dispatch(fetchCampaignsSuccess(campaignsWithNgoId))
+          hasSyncedRef.current = true
         }
       } catch (error) {
         console.error('Error syncing NGO campaigns:', error)
       }
     }
 
-    if (user && user.role === 'ngo') {
-      // Sync with backend, but campaigns stay in Redux even if this fails
+    // Always sync when component mounts
+    if (!hasSyncedRef.current) {
       syncNGOCampaigns()
     }
-  }, [user?._id, user?.role, dispatch])
+  }, [])
 
   // ---------------------------
   // Access control
