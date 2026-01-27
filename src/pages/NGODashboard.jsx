@@ -41,12 +41,18 @@ const NGODashboard = () => {
         console.log('[NGODashboard] Syncing campaigns for ngoId:', ngoId)
         const response = await campaignService.getNGOCampaigns(ngoId)
         if (response.data.success) {
-          console.log('[NGODashboard] Received campaigns from backend:', response.data.data.length)
-          response.data.data.forEach(c => {
+          // Add ngoId to campaigns if missing (backend workaround)
+          const campaignsWithNgoId = response.data.data.map(campaign => ({
+            ...campaign,
+            ngoId: campaign.ngoId || ngoId // Add ngoId if missing
+          }))
+          
+          console.log('[NGODashboard] Received campaigns from backend:', campaignsWithNgoId.length)
+          campaignsWithNgoId.forEach(c => {
             console.log('[NGODashboard] Backend campaign:', c.title, 'ngoId:', c.ngoId, '_id:', c._id)
           })
           // Just dispatch to Redux - the reducer will merge with existing campaigns
-          dispatch(fetchCampaignsSuccess(response.data.data))
+          dispatch(fetchCampaignsSuccess(campaignsWithNgoId))
         }
       } catch (error) {
         console.error('Error syncing NGO campaigns:', error)
