@@ -6,7 +6,7 @@ const CampaignCard = ({ campaign }) => {
   const raisedAmount = campaign.raisedAmount || 0
   const goalAmount = campaign.goalAmount || 1
   const progressPercentage = (raisedAmount / goalAmount) * 100
-  const imageUrl = campaign.image || 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+  const imageUrl = campaign.image || 'https://picsum.photos/870/500?random=1'
   const category = campaign.category || 'Other'
   const donorsCount = Array.isArray(campaign.donors) ? campaign.donors.length : (campaign.donors || campaign.totalDonorsCount || 0)
   const daysLeft = campaign.daysLeft || 30
@@ -16,7 +16,7 @@ const CampaignCard = ({ campaign }) => {
       <div className="campaign-card">
         <div className="campaign-image">
           <img src={imageUrl} alt={campaign.title} onError={(e) => {
-            e.target.src = 'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+            e.target.src = 'https://picsum.photos/870/500?random=2'
           }} />
           <span className="campaign-status">{campaign.status === 'active' || campaign.status === 'approved' ? '✓ Active' : campaign.status === 'pending' ? 'Pending' : 'Rejected'}</span>
         </div>

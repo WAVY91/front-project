@@ -51,7 +51,7 @@ const CampaignDetail = () => {
   const progressPercentage = (campaign.raisedAmount / (campaign.goalAmount || 1)) * 100
   const imageUrl =
     campaign.image ||
-    'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+    'https://picsum.photos/870/500?random=campaign'
   const daysLeft = campaign.daysLeft || 30
 
   const handleDonate = () => {
@@ -75,7 +75,7 @@ const CampaignDetail = () => {
             alt={campaign.title}
             onError={(e) => {
               e.target.src =
-                'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                'https://picsum.photos/870/500?random=campaign'
             }}
           />
           {campaign.verified && <div className="verified-badge">✓ Verified</div>}
@@ -156,12 +156,12 @@ const CampaignDetail = () => {
                 <img
                   src={
                     c.image ||
-                    'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                    'https://picsum.photos/870/500?random=campaign'
                   }
                   alt={c.title}
                   onError={(e) => {
                     e.target.src =
-                      'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                      'https://picsum.photos/870/500?random=campaign'
                   }}
                 />
                 <h4>{c.title}</h4>

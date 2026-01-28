@@ -264,7 +264,7 @@ const NGODashboard = () => {
               const progressPercentage = (campaign.raisedAmount / (campaign.goalAmount || 1)) * 100
               const imageUrl =
                 campaign.image ||
-                'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
+                'https://picsum.photos/870/500?random=campaign'
               const campaignId = campaign._id || campaign.id
 
               return (
@@ -275,11 +275,7 @@ const NGODashboard = () => {
                       alt={campaign.title}
                       onError={(e) => {
                         e.target.src =
-                          'https://images.unsplash.com/photo-1532996122724-8f3c19b7da4d?q=80&w=870&auto=format&fit=crop'
-                      }}
-                    />
-                  </div>
-                  <div className="campaign-card-info">
+                          'https://picsum.photos/870/500?random=3'
                     <h3>{campaign.title}</h3>
                     <p>{campaign.description}</p>
                     <div className="campaign-progress">
