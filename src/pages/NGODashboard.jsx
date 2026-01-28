@@ -276,6 +276,10 @@ const NGODashboard = () => {
                       onError={(e) => {
                         e.target.src =
                           'https://picsum.photos/870/500?random=3'
+                      }}
+                    />
+                  </div>
+                  <div className="campaign-card-info">
                     <h3>{campaign.title}</h3>
                     <p>{campaign.description}</p>
                     <div className="campaign-progress">
