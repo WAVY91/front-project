@@ -45,13 +45,13 @@ const Support = () => {
           <p>Can't find what you're looking for? Our NGO success team is available 24/7.</p>
           <div className="contact-methods">
             <div className="method">
-              <strong>Email:</strong> ngo-support@goodhealth.org
+              <strong>Email:</strong> timetomisin@gmail.com
             </div>
             <div className="method">
               <strong>Live Chat:</strong> Available in your NGO Dashboard
             </div>
             <div className="method">
-              <strong>Phone:</strong> +234 800-NGO-HELP
+              <strong>Phone:</strong> +234 703-9692-720
             </div>
           </div>
         </section>

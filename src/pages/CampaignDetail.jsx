@@ -15,19 +15,16 @@ const CampaignDetail = () => {
   const [relatedCampaigns, setRelatedCampaigns] = useState([])
   const [showDonationModal, setShowDonationModal] = useState(false)
 
-  // Find campaign from Redux
   useEffect(() => {
     const found = campaigns.find((c) => c._id === id || c.id === parseInt(id))
     setCampaign(found)
   }, [id, campaigns])
 
-  // Fetch related campaigns from backend
   useEffect(() => {
     if (campaign?.ngoId) {
       fetch(`https://your-backend.com/campaign/ngo/${campaign.ngoId}`)
         .then((res) => res.json())
         .then((data) => {
-          // Exclude current campaign
           const filtered = data.filter((c) => c._id !== campaign._id)
           setRelatedCampaigns(filtered)
         })
@@ -178,7 +175,6 @@ const CampaignDetail = () => {
   )
 }
 
-// ---------- Donation Modal ----------
 const DonationModal = ({ campaign, onClose, user }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()

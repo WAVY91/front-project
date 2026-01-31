@@ -32,9 +32,6 @@ const NGODashboard = () => {
   const [showEditForm, setShowEditForm] = useState(false)
   const hasSyncedRef = useRef(false)
 
-  // ---------------------------
-  // Sync with backend every time component mounts
-  // ---------------------------
   useEffect(() => {
     const syncNGOCampaigns = async () => {
       if (!user || user.role !== 'ngo') return
@@ -44,17 +41,15 @@ const NGODashboard = () => {
         console.log('[NGODashboard] Syncing campaigns for ngoId:', ngoId)
         const response = await campaignService.getNGOCampaigns(ngoId)
         if (response.data.success) {
-          // Add ngoId to campaigns if missing (backend workaround)
           const campaignsWithNgoId = response.data.data.map(campaign => ({
             ...campaign,
-            ngoId: campaign.ngoId || ngoId // Add ngoId if missing
+            ngoId: campaign.ngoId || ngoId 
           }))
           
           console.log('[NGODashboard] Received campaigns from backend:', campaignsWithNgoId.length)
           campaignsWithNgoId.forEach(c => {
             console.log('[NGODashboard] Backend campaign:', c.title, 'ngoId:', c.ngoId, '_id:', c._id)
           })
-          // Just dispatch to Redux - the reducer will merge with existing campaigns
           dispatch(fetchCampaignsSuccess(campaignsWithNgoId))
           hasSyncedRef.current = true
         }
@@ -63,15 +58,11 @@ const NGODashboard = () => {
       }
     }
 
-    // Always sync when component mounts
     if (!hasSyncedRef.current) {
       syncNGOCampaigns()
     }
   }, [])
 
-  // ---------------------------
-  // Access control
-  // ---------------------------
   if (!user || user.role !== 'ngo') {
     return (
       <div className="dashboard-container">
@@ -86,9 +77,6 @@ const NGODashboard = () => {
     )
   }
 
-  // ---------------------------
-  // Computed NGO stats
-  // ---------------------------
   const ngoName = user.ngoName || 'Your Organization'
   const ngoId = user._id || user.id
   const ngoCampaigns = campaigns.filter((c) => c.ngoId === ngoId)
@@ -98,9 +86,6 @@ const NGODashboard = () => {
     return sum + count
   }, 0)
 
-  // ---------------------------
-  // Handlers
-  // ---------------------------
   const handleCreateCampaign = async (values) => {
     try {
       const ngoId = user._id || user.id
@@ -123,7 +108,6 @@ const NGODashboard = () => {
         const createdCampaign = response.data.data
         console.log('[NGODashboard] Campaign created successfully:', createdCampaign)
         
-        // Ensure ngoId is set on the campaign before adding to Redux
         if (!createdCampaign.ngoId) {
           createdCampaign.ngoId = ngoId
         }
@@ -181,9 +165,6 @@ const NGODashboard = () => {
     }
   }
 
-  // ---------------------------
-  // Render dashboard
-  // ---------------------------
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -337,9 +318,6 @@ const NGODashboard = () => {
   )
 }
 
-// ---------------------------
-// Campaign Form Component
-// ---------------------------
 const CampaignForm = ({ initialValues, onSubmit, onCancel, isEdit }) => {
   return (
     <div className={`create-form-container ${isEdit ? 'edit-form' : ''}`}>

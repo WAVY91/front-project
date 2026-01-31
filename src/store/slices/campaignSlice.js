@@ -7,7 +7,6 @@ const initialState = {
   lastFetchTime: null,
 }
 
-// Load campaigns from localStorage on app start
 const loadCampaignsFromStorage = () => {
   try {
     const stored = localStorage.getItem('campaigns_cache')
@@ -20,7 +19,6 @@ const loadCampaignsFromStorage = () => {
   }
 }
 
-// Save campaigns to localStorage
 const saveCampaignsToStorage = (campaigns) => {
   try {
     localStorage.setItem('campaigns_cache', JSON.stringify(campaigns))
@@ -51,20 +49,16 @@ const campaignSlice = createSlice({
       console.log('[campaignSlice] fetchCampaignsSuccess - incoming campaigns:', incomingCampaigns.length)
       console.log('[campaignSlice] Current campaigns in state:', state.campaigns.length)
       
-      // Merge incoming campaigns with existing ones
-      // Keep existing campaigns that are not in the incoming list
       const incomingIds = new Set(incomingCampaigns.map(c => c._id || c.id))
       const preservedCampaigns = state.campaigns.filter(c => !incomingIds.has(c._id || c.id))
       
       console.log('[campaignSlice] Preserved campaigns (not in backend):', preservedCampaigns.length)
       
-      // Combine: incoming campaigns (to sync backend changes) + preserved campaigns (local ones)
       state.campaigns = [...incomingCampaigns, ...preservedCampaigns]
       console.log('[campaignSlice] Final campaigns after merge:', state.campaigns.length)
       state.loading = false
       state.lastFetchTime = Date.now()
       
-      // Save to localStorage
       saveCampaignsToStorage(state.campaigns)
     },
     fetchCampaignsFailure: (state, action) => {
@@ -74,13 +68,11 @@ const campaignSlice = createSlice({
     addCampaign: (state, action) => {
       const campaign = action.payload
       
-      // Check if campaign already exists
       const existingIndex = state.campaigns.findIndex(
         c => (c._id || c.id) === (campaign._id || campaign.id)
       )
       
       if (existingIndex !== -1) {
-        // Update existing campaign
         state.campaigns[existingIndex] = {
           ...state.campaigns[existingIndex],
           ...campaign,
@@ -88,7 +80,6 @@ const campaignSlice = createSlice({
           _id: campaign._id || state.campaigns[existingIndex]._id,
         }
       } else {
-        // Add new campaign
         const newCampaign = {
           ...campaign,
           id: campaign.id || campaign._id || (state.campaigns.length + 1),
@@ -101,7 +92,6 @@ const campaignSlice = createSlice({
         state.campaigns.push(newCampaign)
       }
       
-      // Save to localStorage
       saveCampaignsToStorage(state.campaigns)
     },
     updateCampaign: (state, action) => {
@@ -116,7 +106,6 @@ const campaignSlice = createSlice({
         }
       }
       
-      // Save to localStorage
       saveCampaignsToStorage(state.campaigns)
     },
     verifyCampaign: (state, action) => {
@@ -126,7 +115,6 @@ const campaignSlice = createSlice({
         campaign.status = 'active'
       }
       
-      // Save to localStorage
       saveCampaignsToStorage(state.campaigns)
     },
     rejectCampaign: (state, action) => {
@@ -135,13 +123,11 @@ const campaignSlice = createSlice({
         campaign.status = 'rejected'
       }
       
-      // Save to localStorage
       saveCampaignsToStorage(state.campaigns)
     },
     deleteCampaign: (state, action) => {
       state.campaigns = state.campaigns.filter((c) => c.id !== action.payload && c._id !== action.payload)
       
-      // Save to localStorage
       saveCampaignsToStorage(state.campaigns)
     },
     updateCampaignFunding: (state, action) => {
@@ -150,16 +136,12 @@ const campaignSlice = createSlice({
       if (campaign) {
         campaign.raisedAmount += amount
         if (Array.isArray(campaign.donors)) {
-          // If it's an array, we can't easily add the new donor object here without more info,
-          // but we should at least not crash. The next fetch will update it correctly.
-          // For now, we don't push to avoid state inconsistency if backend structure is complex.
         } else {
           campaign.donors = (campaign.donors || 0) + 1
         }
         campaign.totalDonorsCount = (campaign.totalDonorsCount || 0) + 1
       }
       
-      // Save to localStorage
       saveCampaignsToStorage(state.campaigns)
     },
   },
