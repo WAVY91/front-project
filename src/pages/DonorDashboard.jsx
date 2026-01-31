@@ -1,14 +1,37 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../store/slices/authSlice'
+import { fetchDonationsStart, fetchDonationsSuccess, fetchDonationsFailure } from '../store/slices/donationSlice'
+import donationService from '../services/donationService'
 import '../styles/Dashboard.css'
 
 const DonorDashboard = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.user)
-  const donations = useSelector((state) => state.donations.donations)
+  const { donations, loading, error } = useSelector((state) => state.donations)
+
+  useEffect(() => {
+    const fetchDonations = async () => {
+      if (user && (user._id || user.id)) {
+        dispatch(fetchDonationsStart())
+        try {
+          const donorId = user._id || user.id
+          const response = await donationService.getDonationsByDonor(donorId)
+          if (response.data.success) {
+            dispatch(fetchDonationsSuccess(response.data.data))
+          } else {
+            dispatch(fetchDonationsFailure('Failed to fetch donations'))
+          }
+        } catch (error) {
+          dispatch(fetchDonationsFailure(error.message))
+        }
+      }
+    }
+
+    fetchDonations()
+  }, [dispatch, user])
 
   if (!user || user.role !== 'donor') {
     return (
@@ -70,7 +93,11 @@ const DonorDashboard = () => {
           </button>
         </div>
 
-        {donations.length > 0 ? (
+        {loading ? (
+          <div className="loading-state">Loading your donations...</div>
+        ) : error ? (
+          <div className="error-state">{error}</div>
+        ) : donations.length > 0 ? (
           <div className="donations-list">
             <div className="donations-table-header">
               <div>Campaign</div>
@@ -80,15 +107,17 @@ const DonorDashboard = () => {
               <div>Status</div>
             </div>
             {donations.map((donation) => (
-              <div key={donation.id} className="donation-item">
+              <div key={donation._id || donation.id} className="donation-item">
                 <div className="donation-campaign">{donation.campaignTitle}</div>
                 <div className="donation-ngo">{donation.ngoName}</div>
                 <div className="donation-amount">₦{donation.amount.toLocaleString()}</div>
                 <div className="donation-date">
-                  {new Date(donation.timestamp).toLocaleDateString()}
+                  {new Date(donation.timestamp || donation.createdAt).toLocaleDateString()}
                 </div>
                 <div className="donation-status">
-                  <span className="status-badge completed">{donation.status}</span>
+                  <span className={`status-badge ${donation.status?.toLowerCase() || 'completed'}`}>
+                    {donation.status || 'Completed'}
+                  </span>
                 </div>
               </div>
             ))}
