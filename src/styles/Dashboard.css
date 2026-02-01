@@ -503,6 +503,21 @@
   background: #5568d3;
 }
 
+.btn-secondary {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #5568d3;
+}
+
 .btn-success {
   background: #27ae60;
   color: white;
