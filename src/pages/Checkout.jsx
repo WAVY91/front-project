@@ -133,7 +133,7 @@ const Checkout = () => {
         setTimeout(() => {
           dispatch(clearCurrentDonation())
           navigate('/donor-dashboard')
-        }, 2000)
+        }, 5000)
       } catch (error) {
         setIsProcessing(false)
         const errorMsg = error.response?.data?.message || error.message || 'Failed to process donation. Please try again.'
@@ -149,9 +149,15 @@ const Checkout = () => {
         <div className="success-message">
           <div className="success-icon">✓</div>
           <h2>Payment Successful!</h2>
-          <p>Thank you for your generous donation of ₦{donation.amount.toLocaleString()}</p>
-          <p className="success-detail">A confirmation email has been sent to {donation.donorEmail || 'your email'} and to the NGO</p>
-          <p className="redirect-message">Redirecting to dashboard...</p>
+          <p>Thank you for your generous donation of <strong>₦{donation.amount.toLocaleString()}</strong></p>
+          <p className="success-detail">Your contribution has been received successfully.</p>
+          <p className="redirect-message">You will be redirected to your dashboard in a few seconds...</p>
+          <button onClick={() => {
+            dispatch(clearCurrentDonation());
+            navigate('/donor-dashboard');
+          }} className="btn btn-primary" style={{ marginTop: '20px' }}>
+            Go to Dashboard Now
+          </button>
         </div>
       </div>
     )
