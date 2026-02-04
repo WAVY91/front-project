@@ -396,16 +396,68 @@ const AdminDashboard = () => {
         <div className="dashboard-section">
           <h2>Approved NGOs</h2>
           {approvedNGOs.length > 0 ? (
-            <div className="approved-grid">
-              {approvedNGOs.map((ngo) => (
-                <div key={ngo._id} className="approved-card">
-                  <div className="approved-badge">✓ Verified</div>
-                  <h3>{ngo.ngoName}</h3>
-                  <p className="approved-email">{ngo.email}</p>
-                  <p className="approved-desc">{ngo.ngoDescription}</p>
-                  <p className="approved-status">Status: {ngo.status}</p>
-                </div>
-              ))}
+            <div className="table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>NGO Name</th>
+                    <th>Contact Person</th>
+                    <th>Email</th>
+                    <th>Description</th>
+                    <th>Campaigns</th>
+                    <th>Status</th>
+                    <th>Registered</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {approvedNGOs.map((ngo) => (
+                    <tr key={ngo._id}>
+                      <td data-label="NGO Name">
+                        <strong style={{ color: '#667eea' }}>{ngo.ngoName}</strong>
+                      </td>
+                      <td data-label="Contact Person">{ngo.name}</td>
+                      <td data-label="Email">{ngo.email}</td>
+                      <td data-label="Description">
+                        <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {ngo.ngoDescription || 'No description'}
+                        </div>
+                      </td>
+                      <td data-label="Campaigns">
+                        <span style={{ 
+                          background: '#e8f5e9', 
+                          color: '#2e7d32', 
+                          padding: '4px 12px', 
+                          borderRadius: '12px',
+                          fontWeight: '600',
+                          fontSize: '13px'
+                        }}>
+                          {ngo.campaigns?.length || 0} campaigns
+                        </span>
+                      </td>
+                      <td data-label="Status">
+                        <span style={{ 
+                          background: '#27ae60', 
+                          color: 'white', 
+                          padding: '4px 12px', 
+                          borderRadius: '4px',
+                          fontWeight: '600',
+                          fontSize: '12px',
+                          textTransform: 'uppercase'
+                        }}>
+                          ✓ {ngo.registrationStatus || 'Active'}
+                        </span>
+                      </td>
+                      <td data-label="Registered">
+                        {new Date(ngo.createdAt).toLocaleDateString('en-GB', { 
+                          day: '2-digit', 
+                          month: 'short', 
+                          year: 'numeric' 
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           ) : (
             <div className="empty-state">
@@ -552,11 +604,15 @@ const AdminDashboard = () => {
                 <tbody>
                   {donations.map((donation, index) => (
                     <tr key={donation._id || index}>
-                      <td>{donation.donorName || 'Anonymous'}</td>
-                      <td>{donation.campaignTitle}</td>
-                      <td>₦{donation.amount?.toLocaleString()}</td>
-                      <td>{donation.ngoName}</td>
-                      <td>{new Date(donation.donatedAt).toLocaleDateString()}</td>
+                      <td data-label="Donor Name">{donation.donorName || 'Anonymous'}</td>
+                      <td data-label="Campaign">{donation.campaignTitle}</td>
+                      <td data-label="Amount">₦{donation.amount?.toLocaleString()}</td>
+                      <td data-label="NGO">{donation.ngoName}</td>
+                      <td data-label="Date">{new Date(donation.donatedAt).toLocaleDateString('en-GB', { 
+                        day: '2-digit', 
+                        month: 'short', 
+                        year: 'numeric' 
+                      })}</td>
                     </tr>
                   ))}
                 </tbody>
