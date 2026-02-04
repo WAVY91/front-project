@@ -28,7 +28,30 @@ const Checkout = () => {
   const user = useSelector((state) => state.auth.user)
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [successDonation, setSuccessDonation] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
+
+  // Check for payment success first, before checking donation
+  if (paymentSuccess && successDonation) {
+    return (
+      <div className="checkout-container">
+        <div className="success-message">
+          <div className="success-icon">✓</div>
+          <h2>Donation Successful!</h2>
+          <p>Thank you for your generous donation of <strong>₦{successDonation.amount.toLocaleString()}</strong></p>
+          <p className="success-detail">Your donation has been successfully received and added to the <strong>{successDonation.campaignTitle}</strong> campaign!</p>
+          <p className="success-detail">Your contribution is making a real difference and will help <strong>{successDonation.ngoName}</strong> achieve their goals.</p>
+          <p className="redirect-message">You will be redirected to your dashboard in a few seconds...</p>
+          <button onClick={() => {
+            dispatch(clearCurrentDonation());
+            navigate('/donor-dashboard');
+          }} className="btn btn-primary" style={{ marginTop: '20px' }}>
+            Go to Dashboard Now
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   if (!donation) {
     return (
@@ -108,6 +131,13 @@ const Checkout = () => {
         console.log('Donation response:', response.data)
 
         setIsProcessing(false)
+        
+        // Store the donation data before clearing and showing success
+        setSuccessDonation({
+          amount: donation.amount,
+          campaignTitle: donation.campaignTitle,
+          ngoName: donation.ngoName
+        })
         setPaymentSuccess(true)
 
         // Save donation with proper backend structure
@@ -144,27 +174,6 @@ const Checkout = () => {
         console.error('Donation submission error:', error)
       }
     }, 2000)
-  }
-
-  if (paymentSuccess) {
-    return (
-      <div className="checkout-container">
-        <div className="success-message">
-          <div className="success-icon">✓</div>
-          <h2>Donation Successful!</h2>
-          <p>Thank you for your generous donation of <strong>₦{donation.amount.toLocaleString()}</strong></p>
-          <p className="success-detail">Your donation has been successfully received and added to the <strong>{donation.campaignTitle}</strong> campaign!</p>
-          <p className="success-detail">Your contribution is making a real difference and will help <strong>{donation.ngoName}</strong> achieve their goals.</p>
-          <p className="redirect-message">You will be redirected to your dashboard in a few seconds...</p>
-          <button onClick={() => {
-            dispatch(clearCurrentDonation());
-            navigate('/donor-dashboard');
-          }} className="btn btn-primary" style={{ marginTop: '20px' }}>
-            Go to Dashboard Now
-          </button>
-        </div>
-      </div>
-    )
   }
 
   return (

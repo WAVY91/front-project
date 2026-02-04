@@ -6,6 +6,7 @@ import { approveNGO, rejectNGO } from '../store/slices/userSlice'
 import { verifyCampaign, rejectCampaign, deleteCampaign } from '../store/slices/campaignSlice'
 import Counter from '../components/Counter'
 import contactService from '../services/contactService'
+import donationService from '../services/donationService'
 import '../styles/Dashboard.css'
 
 const API_URL = 'https://back-project-r1ur.onrender.com'
@@ -21,6 +22,7 @@ const AdminDashboard = () => {
   const [pendingNGOs, setPendingNGOs] = useState([])
   const [approvedNGOs, setApprovedNGOs] = useState([])
   const [contactMessages, setContactMessages] = useState([])
+  const [donations, setDonations] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -29,9 +31,11 @@ const AdminDashboard = () => {
       fetchPendingNGOs()
       fetchApprovedNGOs()
       fetchContactMessages()
+      fetchDonations()
 
       const refreshInterval = setInterval(() => {
         fetchContactMessages()
+        fetchDonations()
       }, 10000)
 
       return () => clearInterval(refreshInterval)
@@ -75,6 +79,17 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       console.error('Failed to fetch contact messages:', err)
+    }
+  }
+
+  const fetchDonations = async () => {
+    try {
+      const response = await donationService.getAllDonations()
+      if (response.data.success) {
+        setDonations(response.data.data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch donations:', err)
     }
   }
 
@@ -278,6 +293,12 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('messages')}
         >
           Contact Messages
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'donations' ? 'active' : ''}`}
+          onClick={() => setActiveTab('donations')}
+        >
+          Donations
         </button>
       </div>
 
@@ -508,6 +529,42 @@ const AdminDashboard = () => {
           ) : (
             <div className="empty-state">
               <p>No contact messages yet</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'donations' && (
+        <div className="dashboard-section">
+          <h2>All Donations</h2>
+          {donations.length > 0 ? (
+            <div className="table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Donor Name</th>
+                    <th>Campaign</th>
+                    <th>Amount</th>
+                    <th>NGO</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {donations.map((donation, index) => (
+                    <tr key={donation._id || index}>
+                      <td>{donation.donorName || 'Anonymous'}</td>
+                      <td>{donation.campaignTitle}</td>
+                      <td>₦{donation.amount?.toLocaleString()}</td>
+                      <td>{donation.ngoName}</td>
+                      <td>{new Date(donation.donatedAt).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <p>No donations yet</p>
             </div>
           )}
         </div>

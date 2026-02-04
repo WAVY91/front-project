@@ -5,6 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .empty-checkout {
@@ -13,6 +14,7 @@
   padding: 60px 40px;
   text-align: center;
   max-width: 500px;
+  animation: scaleIn 0.6s ease-out;
 }
 
 .empty-checkout h2 {
@@ -31,8 +33,8 @@
   padding: 60px 40px;
   text-align: center;
   max-width: 500px;
-}
-
+  animation: scaleIn 0.6s ease-out;
+}\n
 .success-icon {
   width: 80px;
   height: 80px;
@@ -44,18 +46,21 @@
   justify-content: center;
   font-size: 40px;
   margin: 0 auto 20px;
-  animation: scaleIn 0.5s ease;
+  animation: bounce 0.8s ease;
 }
 
-@keyframes scaleIn {
-  0% {
-    transform: scale(0);
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.9);
   }
   50% {
     transform: scale(1.1);
   }
-  100% {
-    transform: scale(1);
+  75% {
+    transform: scale(0.95);
   }
 }
 
@@ -85,12 +90,14 @@
   gap: 30px;
   max-width: 1200px;
   width: 100%;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .checkout-main {
   background: white;
   border-radius: 10px;
   padding: 40px;
+  animation: slideInLeft 0.6s ease-out;
 }
 
 .checkout-main h1 {

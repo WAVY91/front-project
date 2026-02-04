@@ -7,11 +7,11 @@
   align-items: center;
   justify-content: center;
   padding: 80px 40px;
-  background: url('https://images.unsplash.com/photo-1509099836639-18ba1795216d?q=80&w=731&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat scroll;
+  background: url('https://images.unsplash.com/photo-1509099836639-18ba1795216d?q=80&w=731&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat fixed;
   color: white;
   gap: 40px;
   position: relative;
-  min-height: 550px;
+  min-height: 600px;
 }
 
 .hero::before {
@@ -30,6 +30,7 @@
   max-width: 800px;
   z-index: 2;
   position: relative;
+  animation: fadeIn 1s ease-out;
 }
 
 .hero-content h1 {
@@ -37,6 +38,7 @@
   margin-bottom: 20px;
   font-weight: 800;
   line-height: 1.2;
+  animation: fadeInUp 0.8s ease-out 0.2s backwards;
 }
 
 .hero-content p {
@@ -45,6 +47,7 @@
   opacity: 0.95;
   font-weight: 500;
   line-height: 1.6;
+  animation: fadeInUp 0.8s ease-out 0.4s backwards;
 }
 
 .hero-buttons {
@@ -53,6 +56,7 @@
   justify-content: center;
   position: relative;
   z-index: 2;
+  animation: fadeInUp 0.8s ease-out 0.6s backwards;
 }
 
 .btn {
@@ -74,8 +78,8 @@
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .btn-secondary {
@@ -87,6 +91,8 @@
 .btn-secondary:hover {
   background: white;
   color: #667eea;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .btn.large {
@@ -114,6 +120,7 @@
   font-size: 36px;
   margin-bottom: 50px;
   color: #333;
+  animation: fadeInUp 0.8s ease-out;
 }
 
 .features-grid {
@@ -130,11 +137,20 @@
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  animation: scaleIn 0.6s ease-out backwards;
 }
 
+.feature-card:nth-child(1) { animation-delay: 0.1s; }
+.feature-card:nth-child(2) { animation-delay: 0.2s; }
+.feature-card:nth-child(3) { animation-delay: 0.3s; }
+.feature-card:nth-child(4) { animation-delay: 0.4s; }
+.feature-card:nth-child(5) { animation-delay: 0.5s; }
+.feature-card:nth-child(6) { animation-delay: 0.6s; }
+
 .feature-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 .feature-icon {
