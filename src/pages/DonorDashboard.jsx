@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../store/slices/authSlice'
 import { fetchDonationsSuccess } from '../store/slices/donationSlice'
-import { getDonationsByDonor } from '../services/donationService'
+import donationService from '../services/donationService'
 import '../styles/Dashboard.css'
 
 const DonorDashboard = () => {
@@ -22,7 +22,7 @@ const DonorDashboard = () => {
         hasFetchedRef.current = true
         const donorId = user._id || user.id
         console.log('Fetching donations for donor:', donorId)
-        const response = await getDonationsByDonor(donorId)
+        const response = await donationService.getDonationsByDonor(donorId)
         const backendDonations = response.data?.data || response.data || []
         console.log('Backend donations fetched:', backendDonations)
         dispatch(fetchDonationsSuccess(backendDonations))
