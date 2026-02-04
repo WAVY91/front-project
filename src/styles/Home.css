@@ -6,12 +6,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 100px 40px;
+  padding: 80px 40px;
   background: url('https://images.unsplash.com/photo-1509099836639-18ba1795216d?q=80&w=731&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat scroll;
   color: white;
   gap: 40px;
   position: relative;
-  min-height: 750px;
+  min-height: 550px;
 }
 
 .hero::before {

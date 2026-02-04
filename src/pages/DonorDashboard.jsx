@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../store/slices/authSlice'
+import { fetchDonationsSuccess } from '../store/slices/donationSlice'
+import { getDonationsByDonor } from '../services/donationService'
 import '../styles/Dashboard.css'
 
 const DonorDashboard = () => {
@@ -9,6 +11,28 @@ const DonorDashboard = () => {
   const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.user)
   const donations = useSelector((state) => state.donations.donations)
+  const hasFetchedRef = useRef(false)
+
+  // Fetch donations from backend when component mounts
+  useEffect(() => {
+    const syncDonorDonations = async () => {
+      if (!user || user.role !== 'donor' || hasFetchedRef.current) return
+      
+      try {
+        hasFetchedRef.current = true
+        const donorId = user._id || user.id
+        console.log('Fetching donations for donor:', donorId)
+        const response = await getDonationsByDonor(donorId)
+        const backendDonations = response.data?.data || response.data || []
+        console.log('Backend donations fetched:', backendDonations)
+        dispatch(fetchDonationsSuccess(backendDonations))
+      } catch (error) {
+        console.error('Error fetching donor donations:', error)
+      }
+    }
+
+    syncDonorDonations()
+  }, [user, dispatch])
 
   if (!user || user.role !== 'donor') {
     return (

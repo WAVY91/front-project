@@ -110,16 +110,19 @@ const Checkout = () => {
         setIsProcessing(false)
         setPaymentSuccess(true)
 
+        // Save donation with proper backend structure
         dispatch(
           addDonation({
             campaignId: campaignId,
             campaignTitle: donation.campaignTitle,
             amount: donation.amount,
+            donorId: donorId,
             donorName: donation.donorName,
             donorEmail: donation.donorEmail,
             ngoName: donation.ngoName,
             paymentMethod: 'card',
             cardLast4: values.cardNumber.slice(-4),
+            donatedAt: new Date().toISOString(),
           })
         )
 
@@ -148,9 +151,10 @@ const Checkout = () => {
       <div className="checkout-container">
         <div className="success-message">
           <div className="success-icon">✓</div>
-          <h2>Payment Successful!</h2>
+          <h2>Donation Successful!</h2>
           <p>Thank you for your generous donation of <strong>₦{donation.amount.toLocaleString()}</strong></p>
-          <p className="success-detail">Your contribution has been received successfully.</p>
+          <p className="success-detail">Your donation has been successfully received and added to the <strong>{donation.campaignTitle}</strong> campaign!</p>
+          <p className="success-detail">Your contribution is making a real difference and will help <strong>{donation.ngoName}</strong> achieve their goals.</p>
           <p className="redirect-message">You will be redirected to your dashboard in a few seconds...</p>
           <button onClick={() => {
             dispatch(clearCurrentDonation());
