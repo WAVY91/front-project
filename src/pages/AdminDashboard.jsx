@@ -63,7 +63,10 @@ const AdminDashboard = () => {
       const response = await fetch(`${API_URL}/admin/all-ngos`)
       const data = await response.json()
       if (data.success) {
-        const approved = data.data.filter(ngo => ngo.status === 'active' || ngo.verified)
+        // Show all NGOs except those that are pending
+        const approved = data.data.filter(ngo => 
+          ngo.registrationStatus !== 'pending'
+        )
         setApprovedNGOs(approved)
       }
     } catch {
