@@ -60,12 +60,8 @@ const donationSlice = createSlice({
     fetchDonationsSuccess: (state, action) => {
       console.log('[donationSlice] fetchDonationsSuccess - incoming donations:', action.payload.length)
       
-      // Merge incoming donations with existing ones
-      const incomingDonations = action.payload
-      const incomingIds = new Set(incomingDonations.map(d => d._id || d.id))
-      const preservedDonations = state.donations.filter(d => !incomingIds.has(d._id || d.id))
-      
-      state.donations = [...incomingDonations, ...preservedDonations]
+      // Replace donations with incoming ones from backend (don't merge with other users' donations)
+      state.donations = action.payload
       state.loading = false
       
       // Save to localStorage
@@ -78,6 +74,11 @@ const donationSlice = createSlice({
     clearCurrentDonation: (state) => {
       state.currentDonation = null
     },
+    clearAllDonations: (state) => {
+      state.donations = []
+      state.currentDonation = null
+      localStorage.removeItem('donations_cache')
+    },
   },
 })
 
@@ -88,6 +89,7 @@ export const {
   fetchDonationsSuccess,
   fetchDonationsFailure,
   clearCurrentDonation,
+  clearAllDonations,
 } = donationSlice.actions
 
 export default donationSlice.reducer

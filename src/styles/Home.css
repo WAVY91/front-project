@@ -11,7 +11,7 @@
   color: white;
   gap: 40px;
   position: relative;
-  min-height: 600px;
+  min-height: 100vh;
 }
 
 .hero::before {

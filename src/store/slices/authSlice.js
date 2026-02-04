@@ -44,6 +44,8 @@ const authSlice = createSlice({
       state.error = null
       localStorage.removeItem('user')
       localStorage.removeItem('authToken')
+      localStorage.removeItem('donations_cache')
+      localStorage.removeItem('campaigns_cache')
     },
     clearError: (state) => {
       state.error = null
