@@ -129,6 +129,7 @@ const NGODashboard = () => {
 
   const handleUpdateCampaign = async (values) => {
     try {
+      console.log('Updating campaign with values:', values)
       const response = await campaignService.updateCampaign(editingCampaign._id || editingCampaign.id, {
         title: values.title,
         description: values.description,
@@ -138,11 +139,14 @@ const NGODashboard = () => {
         image: values.image,
       })
 
+      console.log('Update response:', response.data)
       if (response.data.success) {
         dispatch(updateCampaign(response.data.data))
         setEditingCampaign(null)
         setShowEditForm(false)
-        alert('Campaign updated successfully!')
+        alert('Campaign updated successfully! Refreshing...')
+        // Force refresh campaigns from backend
+        window.location.reload()
       }
     } catch (error) {
       console.error('Error updating campaign:', error)
