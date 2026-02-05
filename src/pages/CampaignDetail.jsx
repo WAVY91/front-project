@@ -48,7 +48,7 @@ const CampaignDetail = () => {
   const progressPercentage = (campaign.raisedAmount / (campaign.goalAmount || 1)) * 100
   const imageUrl =
     campaign.image ||
-    'https://picsum.photos/870/500?random=campaign'
+    'https://via.placeholder.com/870x500/667eea/ffffff?text=No+Image'
   const daysLeft = campaign.daysLeft || 30
 
   const handleDonate = () => {
@@ -72,7 +72,7 @@ const CampaignDetail = () => {
             alt={campaign.title}
             onError={(e) => {
               e.target.src =
-                'https://picsum.photos/870/500?random=campaign'
+                'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
             }}
           />
           {campaign.verified && <div className="verified-badge">✓ Verified</div>}
@@ -153,12 +153,12 @@ const CampaignDetail = () => {
                 <img
                   src={
                     c.image ||
-                    'https://picsum.photos/870/500?random=campaign'
+                    'https://via.placeholder.com/870x500/667eea/ffffff?text=No+Image'
                   }
                   alt={c.title}
                   onError={(e) => {
                     e.target.src =
-                      'https://picsum.photos/870/500?random=campaign'
+                      'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
                   }}
                 />
                 <h4>{c.title}</h4>
