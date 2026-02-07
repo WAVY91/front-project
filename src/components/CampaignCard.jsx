@@ -6,9 +6,20 @@ const CampaignCard = ({ campaign }) => {
   const raisedAmount = campaign.raisedAmount || 0
   const goalAmount = campaign.goalAmount || 1
   const progressPercentage = (raisedAmount / goalAmount) * 100
-  // Use campaign image if available, otherwise use a working fallback
-  const imageUrl = campaign.image || 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
   const category = campaign.category || 'Other'
+  
+  // Different fallback images based on category
+  const categoryImages = {
+    'Education': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800',
+    'Healthcare': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800',
+    'Water': 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800',
+    'Electricity': 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800',
+    'Food': 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
+    'Shelter': 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800',
+    'Other': 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
+  }
+  
+  const imageUrl = campaign.image || categoryImages[category] || categoryImages['Other']
   const donorsCount = Array.isArray(campaign.donors) ? campaign.donors.length : (campaign.donors || campaign.totalDonorsCount || 0)
   const daysLeft = campaign.daysLeft || 30
 
@@ -21,9 +32,9 @@ const CampaignCard = ({ campaign }) => {
             alt={campaign.title}
             loading="lazy"
             onError={(e) => {
-              // Prevent infinite loop
-              if (e.target.src !== 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800') {
-                e.target.src = 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
+              const fallback = 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
+              if (e.target.src !== fallback) {
+                e.target.src = fallback
               }
             }}
           />
