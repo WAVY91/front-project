@@ -51,6 +51,16 @@ const CampaignDetail = () => {
     'https://via.placeholder.com/870x500/667eea/ffffff?text=No+Image'
   const daysLeft = campaign.daysLeft || 30
 
+  const handleImageError = (e) => {
+    // Try CORS proxy as fallback
+    if (!e.target.src.includes('corsproxy') && campaign.image) {
+      e.target.src = `https://corsproxy.io/?${encodeURIComponent(campaign.image)}`
+    } else {
+      // Final fallback to placeholder
+      e.target.src = 'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
+    }
+  }
+
   const handleDonate = () => {
     if (!user) {
       navigate('/signin')
@@ -70,10 +80,8 @@ const CampaignDetail = () => {
           <img
             src={imageUrl}
             alt={campaign.title}
-            onError={(e) => {
-              e.target.src =
-                'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
-            }}
+            crossOrigin="anonymous"
+            onError={handleImageError}
           />
           {campaign.verified && <div className="verified-badge">✓ Verified</div>}
         </div>
@@ -156,9 +164,13 @@ const CampaignDetail = () => {
                     'https://via.placeholder.com/870x500/667eea/ffffff?text=No+Image'
                   }
                   alt={c.title}
+                  crossOrigin="anonymous"
                   onError={(e) => {
-                    e.target.src =
-                      'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
+                    if (!e.target.src.includes('corsproxy') && c.image) {
+                      e.target.src = `https://corsproxy.io/?${encodeURIComponent(c.image)}`
+                    } else {
+                      e.target.src = 'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
+                    }
                   }}
                 />
                 <h4>{c.title}</h4>

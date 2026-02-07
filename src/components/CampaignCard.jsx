@@ -11,13 +11,26 @@ const CampaignCard = ({ campaign }) => {
   const donorsCount = Array.isArray(campaign.donors) ? campaign.donors.length : (campaign.donors || campaign.totalDonorsCount || 0)
   const daysLeft = campaign.daysLeft || 30
 
+  const handleImageError = (e) => {
+    // Try CORS proxy as fallback
+    if (!e.target.src.includes('cors-anywhere') && campaign.image) {
+      e.target.src = `https://corsproxy.io/?${encodeURIComponent(campaign.image)}`
+    } else {
+      // Final fallback to placeholder
+      e.target.src = 'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
+    }
+  }
+
   return (
     <Link to={`/campaign/${campaign._id || campaign.id}`} className="campaign-card-link">
       <div className="campaign-card">
         <div className="campaign-image">
-          <img src={imageUrl} alt={campaign.title} onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
-          }} />
+          <img 
+            src={imageUrl} 
+            alt={campaign.title} 
+            crossOrigin="anonymous"
+            onError={handleImageError}
+          />
           <span className="campaign-status">{campaign.status === 'active' || campaign.status === 'approved' ? '✓ Active' : campaign.status === 'pending' ? 'Pending' : 'Rejected'}</span>
         </div>
         <div className="campaign-content">

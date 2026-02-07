@@ -382,6 +382,9 @@ const CampaignForm = ({ initialValues, onSubmit, onCancel, isEdit }) => {
               <label>Campaign Image URL</label>
               <Field name="image" type="url" placeholder="Enter campaign image URL (e.g., https://...)" />
               <ErrorMessage name="image" component="span" className="error" />
+              <small style={{ color: '#666', fontSize: '12px', display: 'block', marginTop: '5px' }}>
+                ✨ You can use any image URL from any source (Pinterest, Imgur, Google Drive, Unsplash, etc.)
+              </small>
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
