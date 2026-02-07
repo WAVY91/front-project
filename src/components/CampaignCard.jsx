@@ -6,7 +6,8 @@ const CampaignCard = ({ campaign }) => {
   const raisedAmount = campaign.raisedAmount || 0
   const goalAmount = campaign.goalAmount || 1
   const progressPercentage = (raisedAmount / goalAmount) * 100
-  const imageUrl = campaign.image || 'https://via.placeholder.com/870x500/667eea/ffffff?text=No+Image'
+  // Use campaign image if available, otherwise use a working fallback
+  const imageUrl = campaign.image || 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
   const category = campaign.category || 'Other'
   const donorsCount = Array.isArray(campaign.donors) ? campaign.donors.length : (campaign.donors || campaign.totalDonorsCount || 0)
   const daysLeft = campaign.daysLeft || 30
@@ -17,10 +18,13 @@ const CampaignCard = ({ campaign }) => {
         <div className="campaign-image">
           <img 
             src={imageUrl} 
-            alt={campaign.title} 
+            alt={campaign.title}
+            loading="lazy"
             onError={(e) => {
-              e.target.onerror = null
-              e.target.src = 'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
+              // Prevent infinite loop
+              if (e.target.src !== 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800') {
+                e.target.src = 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
+              }
             }}
           />
           <span className="campaign-status">{campaign.status === 'active' || campaign.status === 'approved' ? '✓ Active' : campaign.status === 'pending' ? 'Pending' : 'Rejected'}</span>

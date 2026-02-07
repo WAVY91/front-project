@@ -48,7 +48,7 @@ const CampaignDetail = () => {
   const progressPercentage = (campaign.raisedAmount / (campaign.goalAmount || 1)) * 100
   const imageUrl =
     campaign.image ||
-    'https://via.placeholder.com/870x500/667eea/ffffff?text=No+Image'
+    'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
   const daysLeft = campaign.daysLeft || 30
 
   const handleDonate = () => {
@@ -70,9 +70,11 @@ const CampaignDetail = () => {
           <img
             src={imageUrl}
             alt={campaign.title}
+            loading="lazy"
             onError={(e) => {
-              e.target.onerror = null
-              e.target.src = 'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
+              if (e.target.src !== 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800') {
+                e.target.src = 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
+              }
             }}
           />
           {campaign.verified && <div className="verified-badge">✓ Verified</div>}
@@ -153,12 +155,14 @@ const CampaignDetail = () => {
                 <img
                   src={
                     c.image ||
-                    'https://via.placeholder.com/870x500/667eea/ffffff?text=No+Image'
+                    'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
                   }
                   alt={c.title}
+                  loading="lazy"
                   onError={(e) => {
-                    e.target.onerror = null
-                    e.target.src = 'https://via.placeholder.com/870x500/667eea/ffffff?text=Image+Not+Available'
+                    if (e.target.src !== 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800') {
+                      e.target.src = 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=800'
+                    }
                   }}
                 />
                 <h4>{c.title}</h4>
