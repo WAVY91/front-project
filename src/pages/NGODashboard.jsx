@@ -101,12 +101,14 @@ const NGODashboard = () => {
         status: 'active',
       }
       
-      console.log('[NGODashboard] Creating campaign with ngoId:', ngoId)
+      console.log('[NGODashboard] Creating campaign with data:', campaignData)
+      console.log('[NGODashboard] Image URL being sent:', values.image)
       const response = await campaignService.createCampaign(campaignData)
 
       if (response.data.success) {
         const createdCampaign = response.data.data
         console.log('[NGODashboard] Campaign created successfully:', createdCampaign)
+        console.log('[NGODashboard] Returned image URL:', createdCampaign.image)
         
         if (!createdCampaign.ngoId) {
           createdCampaign.ngoId = ngoId
@@ -114,7 +116,9 @@ const NGODashboard = () => {
         
         dispatch(addCampaign(createdCampaign))
         setShowCreateForm(false)
-        alert('Campaign created successfully!')
+        alert('Campaign created successfully! Refreshing...')
+        // Force page refresh to show new campaign with correct image
+        window.location.reload()
       }
     } catch (error) {
       console.error('Error creating campaign:', error)
